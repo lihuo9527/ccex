@@ -1,0 +1,102 @@
+::ng-deep .vertical-center-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+::ng-deep .vertical-center-modal .ant-modal {
+    .ant-modal-body {
+        padding: 100px;
+    }
+    top: 0;
+}
+
+.vertical-center-modal {
+    &__step-content-wrapper {
+        width: 630px;
+        min-height: 500px;
+        margin: 10px auto;
+    }
+    &__step-content {
+        display: flex;
+        min-height: 380px;
+        font-size: 20px;
+        &--small {
+            font-size: 12px;
+        }
+    }
+    &__step-content-label {
+        font-size: 15px;
+    }
+}
+
+.btn-submit {
+    display: block;
+    margin: 15px auto;
+    width: 160px;
+    height: 50px;
+}
+
+.input-invalid {
+    border: 1px solid #F04A5D;
+}
+
+.input-invalid:focus {
+    box-shadow: 0 0 0 1px rgba(228, 80, 113, 0.33);
+}
+
+.btn-disable {
+    background: rgba(69, 78, 80, 0.2)
+}
+
+.validate-box {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-top: 100px;
+}
+
+.validate-box span {
+    font-size: 15px;
+}
+
+.validate-text {
+    flex: 0 0 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.qrCode-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.key-box {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.key-box .key {
+    flex: 0 0 100%;
+    border: 1px solid #eee;
+    color: crimson;
+    text-align: center;
+}
+
+.result-box {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.result-box p {
+    text-align: center;
+    margin-top: 100px;
+}

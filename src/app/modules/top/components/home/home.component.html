@@ -1,0 +1,68 @@
+<div id="eyecatcher-bg"></div>
+<div class="main-wrapper">
+  <div id="carousel-container">
+    <nz-carousel nzAutoPlay [nzEffect]="'fade'" [nzEnableSwipe]="false" (nzAfterChange)="onImageChanged()">
+      <div nz-carousel-content *ngFor="let image of Images">
+        <div class="eyecatcher__content">
+          <img style="cursor:pointer" src="{{image.icon}}?t=201907250100" (click)="onClickCarousel()">
+        </div>
+      </div>
+    </nz-carousel>
+  </div>
+  <!-- Tab buttons -->
+  <div style="margin-top: 0px; height: 52px">
+    <a (click)="onTab(5)" [class]="currentTabId === 5 ? 'tab-button tab-button-active' : 'tab-button tab-button-inactive'">
+      <i nz-icon type="star" theme="fill" style="padding-right:5px;"></i>{{ 'TRADE.FAVORITES' | translate }}
+    </a>
+    <a (click)="onTab(3)" [class]="currentTabId === 3 ? 'tab-button tab-button-active' : 'tab-button tab-button-inactive'">USDT</a>
+    <a (click)="onTab(1)" [class]="currentTabId === 1 ? 'tab-button tab-button-active' : 'tab-button tab-button-inactive'">BTC</a>
+    <a (click)="onTab(2)" [class]="currentTabId === 2 ? 'tab-button tab-button-active' : 'tab-button tab-button-inactive'">ETH</a>
+    <a (click)="onTab(4)" [class]="currentTabId === 4 ? 'tab-button tab-button-active' : 'tab-button tab-button-inactive'">GLB</a>
+    <a (click)="onTab(0)" [class]="currentTabId === 0 ? 'tab-button tab-button-active' : 'tab-button tab-button-inactive'">{{ 'COMMON.ALL' | translate }}</a>
+
+    <nz-input-group id="coin-search" nzPrefixIcon="anticon anticon-search">
+      <input id="searchbox" type="text" placeholder="ETH, XRP, LTC..." [value]="keyword" (keyup)="filter($event)">
+    </nz-input-group>
+  </div>
+  <div style="width: 100%; height: 4px; background-color: #353B41"></div>
+  <div class="has-shadow">
+    <nz-table #tickersTable nzSize="middle" [nzPageSize]="tickers.length" [nzHideOnSinglePage]="true" [nzData]="tickers" [nzLoading]="isLoading">
+      <thead (nzSortChange)="sortTickers($event)" nzSingleSort>
+        <tr>
+          <th width="5%"></th>
+          <th style="padding-left: 30px" width="20%">{{ 'TRADE.PAIR' | translate }}</th>
+          <th width="20%">{{ 'TRADE.LATEST_PRICE' | translate }}</th>
+          <th nzShowSort nzSortKey="change">{{ 'TRADE.24H_CHANGE' | translate }}</th>
+          <th style="text-align: right">{{ 'TRADE.24H_HIGH' | translate }}</th>
+          <th style="text-align: right">{{ 'TRADE.24H_LOW' | translate }}</th>
+          <th nzShowSort nzSortKey="volume" style="text-align: right; padding-right: 30px">{{ 'TRADE.24H_VOLUME' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody style="background-color: white">
+        <ng-container *ngFor="let data of tickersTable.data">
+          <tr *ngIf="data.isVisible" (click)="trade(data.pairStr)" style="cursor:pointer">
+            <td width="5%" style="flex:0 0 5%;justify-content: center;" (click)="onFavorite(data.pairStr,$event)">
+              <a id="favorites">
+                <i nz-icon type="star" theme="fill" [ngClass]="{'favorite':data.isFavorite}"></i>
+              </a>
+            </td>
+            <td style="padding-left: 20px" width="20%">{{data.name}}</td>
+
+            <td style="position: relative;padding-left:0; ">
+                <div class="arrow-box" [ngClass]="{'is-rising':data.type === 'high','is-dropping':data.type === 'low'}">
+                  <i *ngIf="data.type === 'high'" class="is-rising" nz-icon type="arrow-up" theme="outline"></i>
+                  <i  *ngIf="data.type === 'low'" class="is-dropping" nz-icon type="arrow-down" theme="outline"></i>
+                </div>
+                <span class="latest-price" [ngClass]="{'is-rising':data.type === 'high','is-dropping':data.type === 'low'}">{{data.priceStr}} </span>
+            </td>
+            <td [class]="data.change ? (data.change > 0 ? 'is-rising' : 'is-dropping') : ''">{{data.changeStr}}</td>
+            <td style="text-align: right" [class]="data.high ? 'is-rising' : ''">{{data.highStr}}</td>
+            <td style="text-align: right" [class]="data.low ? 'is-dropping' : ''">{{data.lowStr}}</td>
+            <td style="text-align: right; padding-right: 30px">{{data.volumeStr}}</td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+

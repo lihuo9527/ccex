@@ -1,0 +1,75 @@
+<div class="common-content-container">
+  <div class="main-wrapper">
+    <!-- Tab buttons -->
+    <div style="margin-top: 60px; height: 52px">
+      <a (click)="onSwitchTab()" class="tab-button tab-button-inactive">{{ 'COMMON.OPEN_ORDERS' | translate }}</a>
+      <a class="tab-button tab-button-active">{{ 'COMMON.DEALT_ORDERS' | translate }}</a>
+    </div>
+    <div style="width: 100%; height: 4px; background-color: #353B41"></div>
+
+    <!-- Filters -->
+    <div id="trade-history-table-filter">
+      <!-- <h4 style="margin-right: 10px">Date</h4>
+      <nz-range-picker nzFormat="yyyy/MM/dd" (ngModelChange)="onChangeDateRange($event)"></nz-range-picker> -->
+      <h4>{{ 'TRADE.PAIR' | translate }}</h4>
+      <nz-dropdown [nzTrigger]="'click'" [nzClickHide]="true">
+        <button nz-button nz-dropdown>
+          {{currentPair.pairToDisplay}} <i class="anticon anticon-down"></i>
+        </button>
+        <ul nz-menu nzSelectable>
+          <ng-container *ngFor="let pair of candidatePairs">
+            <li nz-menu-item (click)="onChangePair(pair.pairStr)">
+              {{pair.pairToDisplay}}
+            </li>
+          </ng-container>
+        </ul>
+      </nz-dropdown>
+      <h4 style="margin: 0 10px">{{ 'TRADE.BUY_OR_SELL' | translate }}</h4>
+      <nz-dropdown [nzTrigger]="'click'" [nzClickHide]="true">
+        <button nz-button nz-dropdown>
+          {{currentOrderType.display | translate }} <i class="anticon anticon-down"></i>
+        </button>
+        <ul nz-menu nzSelectable>
+          <ng-container *ngFor="let orderType of otherOrderTypes">
+            <li nz-menu-item (click)="onChangeOrderType(orderType.raw)">
+              {{orderType.display | translate }}
+            </li>
+          </ng-container>
+        </ul>
+      </nz-dropdown>
+      <button nz-button nzType="secondary" (click)="onReset()">{{ 'COMMON.RESET' | translate }}</button>
+    </div>
+
+    <div [class]="dealtOrders.length ? '' : 'has-shadow'">
+      <nz-table #dealtOrdersTable (nzPageIndexChange)="fetchDealtOrders(currentPair.pairStr, $event)"
+        [(nzPageIndex)]="pageIndex" [nzFrontPagination]="false" [nzTotal]="totalDataVolume" [nzSize]="'middle'"
+        [nzPageSize]="pageSize" [nzHideOnSinglePage]="true" [nzData]="dealtOrders" [nzLoading]="isLoading"
+        [nzNoResult]="NoDataText">
+        <thead>
+          <tr>
+            <th style="padding-left: 30px" width="20%">{{ 'COMMON.DATETIME' | translate }}</th>
+            <th style="text-align: center" width="15%">{{ 'TRADE.PAIR' | translate }}</th>
+            <th style="text-align: center" width="15%">{{ 'TRADE.BUY_OR_SELL' | translate }}</th>
+            <th width="25%" style="padding-left: 60px">{{ 'TRADE.PRICE' | translate }}</th>
+            <th style="text-align: right; padding-right: 30px" width="25%">{{ 'TRADE.VOLUME' | translate }}</th>
+            <!-- <th>Fees</th>
+            <th>Total</th> -->
+          </tr>
+        </thead>
+        <tbody style="background-color: white">
+          <ng-container *ngFor="let data of dealtOrdersTable.data">
+            <tr *ngIf="data.isVisible">
+              <td style="padding-left: 30px" width="20%">{{data.datetime}}</td>
+              <td style="text-align: center" width="15%">{{data.Pair}}</td>
+              <td style="text-align: center" width="15%">{{ data.Type | translate }}</td>
+              <td width="25%" style="padding-left: 60px">{{data.Price}}</td>
+              <td style="text-align: right; padding-right: 30px" width="25%">{{data.Amount}}</td>
+              <!-- <td>{{data.fees.toFixed(2)}}%</td>
+              <td>{{data.total}}</td> -->
+            </tr>
+          </ng-container>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>

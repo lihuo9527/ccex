@@ -1,0 +1,122 @@
+<nz-affix>
+  <nz-dropdown [nzTrigger]="'click'" style="margin: 8px">
+    <a nz-dropdown>
+      <img class="flag" [src]="localize.currentLanguage.iconUrl">
+      {{localize.currentLanguage.displayName}}
+      <i nz-icon type="down"></i>
+    </a>
+    <ul nz-menu nzSelectable>
+      <li nz-menu-item *ngFor="let language of localize.availableLanguages">
+        <a (click)="changeLanguage(language)">
+          <img class="flag" [src]="language.iconUrl">
+          {{language.displayName}}
+        </a>
+      </li>
+    </ul>
+  </nz-dropdown>
+
+  <marquee *ngIf="announcements.length > 0" behavior="scroll" style="position:absolute;top: 5px;left:150px;width:calc(100% - 210px);">
+    <a onMouseOver="this.parentNode.stop()" onMouseOut="this.parentNode.start()" *ngFor="let announcement of announcements;let i=index;" [href]="announcement.url" style="padding-right:100px;">
+      <i nz-icon type="notification" theme="outline" style="padding-right:5px;"></i>
+      {{ localize.currentLanguage.id === 'zh_CN' ? announcement.zh : announcement.en }}
+    </a>
+  </marquee>
+</nz-affix>
+<div style="height:38px;width:100%;min-width: 1200px;"></div>
+<nz-header>
+  <div class="left-menu" style="flex:0 0 55%;">
+    <div class="logo">
+      <a routerLink="/"><img src="assets/images/glenbit-logo.png"></a>
+    </div>
+    <ul nz-menu [nzTheme]="'dark'" [nzMode]="'horizontal'" style="line-height: 64px">
+      <li nz-menu-item><a routerLink="/"></a>{{ 'HEADER.HOME' | translate }}</li>
+      <li nz-menu-item (mousemove)="isTradeTwoLevelMenuOpen=true" (mouseout)="isTradeTwoLevelMenuOpen=false" style="position: relative;">
+        <a (click)="enterTradePage()">{{ 'HEADER.TRADE' | translate }}</a>
+        <ul [hidden]="!isTradeTwoLevelMenuOpen" class="financingTwoLevelMenu">
+          <li style="margin-top:20px;"><a (click)="enterTradePage()">{{ 'TRADE.TRADING_FLOOR' | translate }}</a></li>
+          <li><a routerLink="/order/open">{{ 'COMMON.OPEN_ORDERS' | translate }}</a></li>
+          <li><a routerLink="/order/dealt">{{ 'COMMON.DEALT_ORDERS' | translate }}</a></li>
+        </ul>
+      </li>
+      <li nz-menu-item (mousemove)="isFinancingTwoLevelMenuOpen=true" (mouseout)="isFinancingTwoLevelMenuOpen=false" style="position: relative;" >
+        <a routerLink="/financing/products_on_sale">{{ 'HEADER.FINANCING' | translate }}</a>
+        <ul [hidden]="!isFinancingTwoLevelMenuOpen" class="financingTwoLevelMenu">
+          <li style="margin-top:20px;"><a routerLink="/financing/products_on_sale">{{ 'FINANCING.PRODUCTS_ON_SALE' | translate }}</a></li>
+          <li><a routerLink="/financing/my_subscription">{{ 'FINANCING.MY_SUBSCRIPTION' | translate }}</a></li>
+          <li><a routerLink="/financing/my_bonus">{{ 'FINANCING.MY_BONUS' | translate }}</a></li>
+        </ul>
+      </li>
+      <li nz-menu-item (mousemove)="isEventCenterTwoLevelMenuOpen=true" (mouseout)="isEventCenterTwoLevelMenuOpen=false" style="position: relative;" >
+        <a routerLink="/events">{{ 'HEADER.EVENT_CENTER' | translate }}</a>
+        <ul [hidden]="!isEventCenterTwoLevelMenuOpen" class="financingTwoLevelMenu">
+          <li style="margin-top:20px;"><a routerLink="/events/lottos">{{ 'EVENT_CENTER.LOTTOS' | translate }}</a></li>
+          <li><a routerLink="/events">{{ 'EVENT_CENTER.EVENTS' | translate }}</a></li>
+          <!-- <li><a routerLink="/events/my_participation">{{ 'EVENT_CENTER.MY_PARTICIPATION' | translate }}</a></li> -->
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="right-menu">
+    <ul style="display: flex;list-style-type: none;margin: 0px;padding-left: 0px;">
+      <li class="invite-rebate">
+        <i nz-icon type="fire" theme="outline" style="color:#df3333;padding-right: 7px;"></i>
+        <a routerLink="/invite" style="color:#fff;padding-right: 20px;text-decoration:none;">{{ 'COMMON.INVITE_REBATE' | translate }}</a>
+      </li>
+      <li *ngIf="!apiClient.currentUser">
+        <div id="buttons">
+          <button (click)="login()" nz-button [nzType]="'primary'">{{ 'COMMON.LOGIN' | translate }}</button>
+          <button (click)="signup()" nz-button [nzType]="'secondary'">{{ 'COMMON.SIGNUP' | translate }}</button>
+        </div>
+      </li>
+      <li *ngIf="apiClient.currentUser" style="padding-left: 20px;position: relative;" (mousemove)="isOverViewTwoLevelMenuOpen=true"  (mouseout)="isOverViewTwoLevelMenuOpen=false">
+          <div class="account">
+            <i nz-icon type="idcard" theme="outline" style="color:#fff;padding-right: 7px;"></i>
+            <a style="color:#fff;padding-right: 20px;text-decoration:none;">{{ 'USER.OVERVIEW' | translate }}</a>
+          </div>
+          <ul [hidden]="!isOverViewTwoLevelMenuOpen" class="two-level-menu">
+              <li style="margin-top:20px;"><a routerLink="/settings/overview">{{ 'USER.ACCOUNT' | translate }}</a></li>
+              <li><a routerLink="/wallet">{{ 'HEADER.WALLET' | translate }}</a></li>
+              <li (click)="logout()"><a>{{ 'COMMON.LOGOUT' | translate }}</a></li>
+          </ul>
+      </li>
+    </ul>
+  </div>
+</nz-header>
+<nz-content>
+  <router-outlet></router-outlet>
+</nz-content>
+<nz-footer>
+  <div class="main-footer">
+    <a href="https://support.glenbit.com/?lang={{localize.currentLanguage.id === 'zh_CN' ? 'zh' : 'en'}}" target="_blank">
+      <span>{{'FOOTER.SUPPORT' | translate }}</span>
+    </a>
+    <a href="https://support.glenbit.com/article/8?lang={{localize.currentLanguage.id === 'zh_CN' ? 'zh' : 'en'}}" target="_blank">
+      <span>{{ 'FOOTER.ABOUT_US' | translate }}</span>
+    </a>
+    <a href="https://support.glenbit.com/article/7?lang={{localize.currentLanguage.id === 'zh_CN' ? 'zh' : 'en'}}" target="_blank">
+      <span>{{ 'FOOTER.TERMS_OF_SERVICE' | translate }}</span>
+    </a>
+    <a href="https://support.glenbit.com/article/6?lang={{localize.currentLanguage.id === 'zh_CN' ? 'zh' : 'en'}}" target="_blank">
+      <span>{{ 'FOOTER.PRIVACY_POLICY' | translate }}</span>
+    </a>
+    <a href="https://support.glenbit.com/article/10?lang={{localize.currentLanguage.id === 'zh_CN' ? 'zh' : 'en'}}" target="_blank">
+      <span>{{ 'FOOTER.FEES' | translate }}</span>
+    </a>
+    <a href="https://support.glenbit.com/article/40?lang={{localize.currentLanguage.id === 'zh_CN' ? 'zh' : 'en'}}" target="_blank">
+      <span>{{ 'FOOTER.CONTACT_US' | translate }}</span>
+    </a>
+
+    <div id="sns-icons">
+      <a href="https://www.facebook.com/GlenBitOfficial" target="_blank"><img src="assets/images/sns_icons/facebook@2x.png" alt=""></a>
+      <a href="https://t.me/glenbitofficial" target="_blank"><img src="assets/images/sns_icons/telegram@2x.png" alt=""></a>
+      <a href="https://twitter.com/glenbitofficial" target="_blank"><img src="assets/images/sns_icons/twitter@2x.png" alt=""></a>
+      <a href="https://www.reddit.com/user/GlenBitOfficial" target="_blank"><img src="assets/images/sns_icons/reddit@2x.png" alt=""></a>
+      <a href="https://medium.com/@GlenBitOfficial" target="_blank"><img src="assets/images/sns_icons/monogram@2x.png" alt=""></a>
+    </div>
+  </div>
+  <div class="sub-footer">CopyRight &#169; 2018 GlenBit.com. All Rights Reserved.</div>
+</nz-footer>
+
+<!-- <a href="https://t.me/glenbitofficial" id="support-telegram" target="_blank">
+  <img src="assets/images/sns_icons/telegram@2x.png" alt="">
+</a> -->

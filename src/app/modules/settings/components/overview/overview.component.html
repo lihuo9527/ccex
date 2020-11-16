@@ -1,0 +1,128 @@
+<div class="common-content-container">
+  <div class="main-wrapper">
+    <section>
+      <nz-card class="has-shadow">
+        <div class="main-profile">
+          <div class="main-profile__image">
+            <img src="assets/images/account@2x.png">
+          </div>
+          <ul class="main-profile__list">
+            <li class="main-profile__content--primary">
+              <span>{{email}} </span>
+              <i nz-icon type="crown" theme="outline" style="color:#dc143c;"></i>
+              <span style="color:#dc143c;"> VIP: {{vipLevel}}</span>
+            </li>
+            <li class="main-profile__content">
+              <div class="main-profile__content-attribute--bold">{{ 'USER.LAST_LOGIN_AT' | translate }}: </div>
+              <div class="main-profile__content-attribute"><time>{{lastLogin.datetime}}</time></div>
+              <a disabled>{{ 'USER.LOGIN_HISTORY' | translate }}</a>
+            </li>
+            <li class="main-profile__content">
+              <div class="main-profile__content-attribute--bold">{{ 'USER.LAST_LOGIN_IP' | translate }}: </div>
+              <div class="main-profile__content-attribute">{{lastLogin.ip}}</div>
+            </li>
+          </ul>
+        </div>
+      </nz-card>
+
+      <div class="sub-profile">
+        <nz-list class="has-shadow" [nzDataSource]="profileAttributes" nzBordered nzSize="large"
+          [nzRenderItem]="profileItem">
+          <ng-template #profileItem let-profileItem>
+            <nz-list-item>
+              <div class="sub-profile__attribute">
+                <div class="sub-profile__attribute-name">{{ profileItem.name | translate }}</div>
+                <div class="sub-profile__attribute-value">{{ profileItem.value | translate }}</div>
+                <div class="sub-profile__attribute-placeholder"></div>
+                <ng-container *ngIf="profileItem.operation">
+                  <div class="sub-profile__attribute-button">
+                    <button nz-button [disabled]="profileItem.disabled" (click)="onOperation(profileItem.id)">{{
+                      profileItem.operation | translate }}</button>
+                  </div>
+                </ng-container>
+              </div>
+            </nz-list-item>
+          </ng-template>
+        </nz-list>
+      </div>
+    </section>
+
+    <section class="security-profile">
+      <h1 class="security-profile__header">{{ 'USER.SECURITY' | translate }}{{ 'COMMON.SETTINGS' | translate }}</h1>
+      <nz-list class="has-shadow" [nzDataSource]="securities" nzBordered nzSize="large" [nzRenderItem]="securityItem">
+        <ng-template #securityItem let-securityItem>
+          <nz-list-item>
+            <div class="security-profile__attribute">
+              <div class="security-profile__attribute-name">{{ securityItem.name | translate }}</div>
+              <div class="security-profile__attribute-value">{{ securityItem.value | translate }}</div>
+              <div class="security-profile__attribute-placeholder"></div>
+              <ng-container *ngIf="securityItem.operation">
+                <div class="security-profile__attribute-button">
+                  <a [routerLink]="securityItem.routerUrl">
+                    <button nz-button
+                      [disabled]="securityItem.disabled">{{ securityItem.operation | translate }}</button>
+                  </a>
+                </div>
+              </ng-container>
+            </div>
+          </nz-list-item>
+        </ng-template>
+      </nz-list>
+    </section>
+
+    <section class="last-login">
+      <h1 class="last-login__header">{{ 'USER.RECENT_LOGINS' | translate }}</h1>
+      <nz-table #recentLoginsTable [nzPageSize]="recentLogins.length" [nzHideOnSinglePage]="true"
+        [nzData]="recentLogins" [nzLoading]="isLoading">
+        <thead>
+          <tr>
+            <th>{{ 'COMMON.TIME' | translate }}</th>
+            <th>IP {{ 'COMMON.ADDRESS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody class="has-shadow">
+          <ng-container *ngFor="let data of recentLoginsTable.data">
+            <tr>
+              <td>{{data.datetime}}</td>
+              <td>{{data.ip}}</td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </nz-table>
+    </section>
+
+    <section class="api-settings">
+      <h1 class="api-settings__header">API Key {{ 'COMMON.SETTINGS' | translate }}</h1>
+      <div class="has-shadow">
+        <nz-table #apiSettingsTable [nzData]="apiSettings">
+          <thead>
+            <tr>
+              <th>{{ 'COMMON.NAME' | translate }}</th>
+              <th>{{ 'COMMON.STATUS' | translate }}</th>
+              <th>{{ 'USER.IS_VALID' | translate }}</th>
+              <th>IP {{ 'COMMON.WHITELIST' | translate }}</th>
+              <th>{{ 'COMMON.PERMISSIONS' | translate }}</th>
+              <th>{{ 'COMMON.OPERATION' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of apiSettingsTable.data">
+              <td>{{data.name}}</td>
+              <td>{{data.status}}</td>
+              <td>{{data.validity}}</td>
+              <td>{{data.ipWhiteList}}</td>
+              <td>{{data.permission}}</td>
+              <td>-</td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+    </section>
+
+    <nz-modal [(nzVisible)]="isKycVisible" [nzFooter]="null" nzClosable="true" (nzOnCancel)="isKycVisible = false">
+      <h2 style="text-align: center">{{ 'USER.KYC' | translate }}</h2>
+      <div id="widget-bp123"></div>
+      <p style="text-align: center">{{ 'KYC.DESCRIPTION' | translate }}</p>
+    </nz-modal>
+  </div>
+</div>

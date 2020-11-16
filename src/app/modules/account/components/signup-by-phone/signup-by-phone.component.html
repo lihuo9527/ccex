@@ -1,0 +1,126 @@
+<div class="common-content-container">
+  <div style="width: 100%; min-width: 900px;">
+    <ng-container *ngIf="!isOver">
+      <div id="main-wrapper" class="has-shadow">
+        <h2>{{ 'COMMON.SIGNUP' | translate }}</h2>
+        <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+          <nz-form-item>
+            <div>
+              <label for="phone">{{ 'USER.PHONE' | translate }}</label>
+              <nz-divider nzType="vertical"></nz-divider>
+              <a routerLink="/account/signup">{{ 'USER.USE_EMAIL' | translate }}</a>
+            </div>
+            <nz-form-control>
+              <nz-input-group [nzAddOnBefore]="addOnBeforeTemplate">
+                <ng-template #addOnBeforeTemplate>
+                  <nz-select style="width: 190px" formControlName="countryCode">
+                    <ng-container *ngFor="let countryCode of localize.countryCodes">
+                      <nz-option [nzLabel]="countryCode.displayValue" [nzValue]="countryCode.rawValue"></nz-option>
+                    </ng-container>
+                  </nz-select>
+                </ng-template>
+                <input type="text" autocomplete="username" name="phone" nz-input formControlName="phone"
+                  placeholder="{{ 'USER.PHONE_PLZ' | translate }}">
+              </nz-input-group>
+              <nz-form-explain *ngIf="validateForm.get('phone').dirty && validateForm.get('phone').errors">
+                {{ 'USER.PHONE_INVALID' | translate }}</nz-form-explain>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <div>
+              <label for="code">{{ 'USER.VERIFY_CODE' | translate }}</label>
+            </div>
+            <nz-form-control>
+              <nz-input-group [nzAddOnAfter]="addOnAfterTemplate">
+                <ng-template #addOnAfterTemplate>
+                  <ng-container *ngIf="countdown === 0">
+                    <div style="width: 120px; cursor: pointer;" (click)="sendVerifyCode()">
+                      {{ 'COMMON.SEND' | translate }}</div>
+                  </ng-container>
+                  <ng-container *ngIf="countdown > 0">
+                    <div style="width: 120px; color: lightgray">{{ 'COMMON.SEND' | translate }} ({{countdown}}s)</div>
+                  </ng-container>
+                </ng-template>
+                <input nz-input type="text" id="code" formControlName="code">
+              </nz-input-group>
+              <nz-form-explain *ngIf="validateForm.get('code').dirty && validateForm.get('code').errors">
+                {{ 'USER.CODE_INVALID' | translate }}</nz-form-explain>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <div>
+              <label for="password">{{ 'USER.PASSWORD' | translate }}</label>
+            </div>
+            <nz-form-control>
+              <input nz-input type="password" id="password" formControlName="password"
+                (ngModelChange)="updateConfirmValidator()">
+              <nz-form-explain *ngIf="validateForm.get('password').dirty && validateForm.get('password').errors">
+                {{ 'USER.PASSWORD_INVALID' | translate }}</nz-form-explain>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <div>
+              <label for="checkPassword">{{ 'USER.COMFIRM_PASSWORD' | translate }}</label>
+            </div>
+            <nz-form-control>
+              <input nz-input type="password" formControlName="checkPassword" id="checkPassword">
+              <nz-form-explain
+                *ngIf="validateForm.get('checkPassword').dirty && validateForm.get('checkPassword').errors">
+                <ng-container *ngIf="validateForm.get('checkPassword').hasError('required')">
+                  {{ 'USER.CONFIRM_PASSWORD_PLZ' | translate }}
+                </ng-container>
+                <ng-container *ngIf="validateForm.get('checkPassword').hasError('confirm')">
+                  {{ 'USER.CONFIRM_PASSWORD_INVALID' | translate }}
+                </ng-container>
+              </nz-form-explain>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <div>
+              <label for="referralId">{{ 'INVITE.REFERRAL_ID' | translate }}</label>
+            </div>
+            <nz-form-control>
+              <input nz-input type="text" formControlName="referralId" id="referralId"
+                placeholder="{{'USER.CAN_BE_NULL' | translate}}">
+              <nz-form-explain *ngIf="validateForm.get('referralId').errors">
+                <ng-container>
+                  {{ 'USER.REFERRAL_ID_ERROR' | translate }}
+                </ng-container>
+              </nz-form-explain>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <label nz-checkbox formControlName="agree">
+                <span>{{ 'USER.AGREED' | translate }}</span>
+              </label>
+              <a href="https://support.glenbit.com/article/7"
+                target="_blank">{{ 'FOOTER.TERMS_OF_SERVICE' | translate }}</a>
+              <nz-form-explain *ngIf="validateForm.get('checkPassword').dirty && validateForm.get('agree').errors">
+                {{ 'USER.REQUIRED' | translate }}</nz-form-explain>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item style="margin-top: 20px">
+            <nz-form-control>
+              <button nz-button nzType="primary" [nzLoading]="isLoading()">{{ 'COMMON.SIGNUP' | translate }}</button>
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="isOver">
+      <div id="result-box">
+        <div id="signup-result">
+          <div style="margin-bottom: 10px;padding-top: 90px;">
+            <i nz-icon type="check-circle" theme="outline"
+              style="font-size:26px;color:#6de831;padding-right:10px; "></i>
+            <span style="font-size:30px;">{{ 'USER.SIGNUP_SUCCESS' | translate }}</span>
+          </div>
+          <br>
+          <a href="/account/login_phone">{{ 'COMMON.LOGIN' | translate }}</a>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

@@ -1,0 +1,47 @@
+<div class="common-content-container">
+  <div class="lottos-container">
+    <div style="width:100%;flex: 0 0 100%;">
+      <img src="assets/images/events/newcomer_{{localize.currentLanguage.id === 'zh_CN' ? 'zh' : 'en'}}.png?t=201907242005" style="width:100%;">
+    </div>
+    <div *ngIf="!isReady" style="display: flex;justify-content:center;align-items:center;width: 100%;min-height: 300px;">
+      <div class="loading"></div>
+    </div>
+    <div class="lottos-box" *ngIf="isReady">
+      <p>
+        <a style="color:#0477ba;font-weight: bold;border-bottom: 1px solid #0477ba;" routerLink="/events/lottos">{{ 'EVENT_CENTER.LOTTOS' | translate }}</a>
+        <span *ngIf="localize.currentLanguage.id === 'en_US'" style="font-weight: bold;color:#000;"> /
+          {{lotto.name}}</span>
+        <span *ngIf="localize.currentLanguage.id === 'zh_CN'" style="font-weight: bold;color:#000;"> /
+          {{lotto.name_zh}}</span>
+      </p>
+      <div class="rule-box has-shadow">
+        <h3>
+          <p style="font-weight: bold;color:#000;margin-top: 20px;">{{'EVENT_CENTER.LOTTO_RULE' | translate}}</p>
+        </h3>
+        <div *ngIf="localize.currentLanguage.id === 'en_US'" class="description-box" [innerHTML]="lotto.description"></div>
+        <div *ngIf="localize.currentLanguage.id === 'zh_CN'" class="description-box" [innerHTML]="lotto.description_zh"></div>
+      </div>
+      <div class="btn-box">
+        <button nz-button class="lottos-btn" [nzType]="'primary'" [nzLoading]="isExecuteLottoLoading"
+          (click)="executeLotto()">{{'EVENT_CENTER.RAFFLE_NOW' | translate}} !</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- lotto open window -->
+<nz-modal [(nzVisible)]="isLottoOpenPopupVisible" nzTitle="{{'EVENT_CENTER.LOTTO_RESULT' | translate }}"
+  [nzFooter]="null" [nzWidth]="600" nzClosable="true" nzMaskClosable="true"
+  (nzOnCancel)="isLottoOpenPopupVisible=false">
+  <p *ngIf="localize.currentLanguage.id === 'zh_CN'" style="width: 100%;text-align:center;">恭喜您获得了</p>
+  <p *ngIf="localize.currentLanguage.id === 'en_US'" style="width: 100%;text-align:center;">Congratulations on getting
+    it</p>
+  <h2 style="width: 100%;text-align:center;font-size: 80px;">{{lottoAmount}} {{lottoCoin}} </h2>
+  <p *ngIf="localize.currentLanguage.id === 'zh_CN'" style="width: 100%;text-align:center;">赶紧参与活动, 解锁它吧！</p>
+  <p *ngIf="localize.currentLanguage.id === 'en_US'" style="width: 100%;text-align:center;">Get involved and unlock it!
+  </p>
+  <div class="btn-box" style="margin:50px 0 30px 0;">
+    <button nz-button class="lottos-btn" style="background: #60d836;color:#fff;"
+      [nzLoading]="isExecuteLottoLoading" (click)="participationEvents()">{{'COMMON.CONFIRM' | translate}} !</button>
+  </div>
+</nz-modal>

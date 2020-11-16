@@ -1,0 +1,122 @@
+[
+  {
+    "id": "zh_CN",
+    "language": "简体中文",
+    "countryCode": {
+      "rawValue": "0086",
+      "displayValue": "中国大陆 (+86)"
+    },
+    "iconUrl": "assets/images/flags/cn.png",
+    "sortOrder": 1
+  },
+  {
+    "id": "en_US",
+    "language": "English(US)",
+    "countryCode": {
+      "rawValue": "0001",
+      "displayValue": "U.S. (+1)"
+    },
+    "iconUrl": "assets/images/flags/us.png",
+    "sortOrder": 2
+  },
+  {
+    "id": "en_GB",
+    "language": "English(GB)",
+    "countryCode": {
+      "rawValue": "0044",
+      "displayValue": "U.K. (+44)"
+    },
+    "iconUrl": "assets/images/flags/gb.png",
+    "sortOrder": 3
+  },
+  {
+    "id": "ja_JP",
+    "language": "日本語",
+    "countryCode": {
+      "rawValue": "0081",
+      "displayValue": "日本 (+81)"
+    },
+    "iconUrl": "assets/images/flags/jp.png",
+    "sortOrder": 4
+  },
+  {
+    "id": "en_AU",
+    "language": "English",
+    "countryCode": {
+      "rawValue": "0061",
+      "displayValue": "Australia (+61)"
+    },
+    "iconUrl": "assets/images/flags/au.png",
+    "sortOrder": 5
+  },
+  {
+    "id": "pl_PL",
+    "language": "Polskie",
+    "countryCode": {
+      "rawValue": "0048",
+      "displayValue": "Polska (+48)"
+    },
+    "iconUrl": "assets/images/flags/jp.png",
+    "sortOrder": 6
+  },
+  {
+    "id": "nl_NL",
+    "language": "Nederlands",
+    "countryCode": {
+      "rawValue": "0031",
+      "displayValue": "Nederland (+31)"
+    },
+    "iconUrl": "assets/images/flags/nl.png",
+    "sortOrder": 7
+  },
+  {
+    "id": "fr_FR",
+    "language": "Français",
+    "countryCode": {
+      "rawValue": "0033",
+      "displayValue": "France (+33)"
+    },
+    "iconUrl": "assets/images/flags/fr.png",
+    "sortOrder": 8
+  },
+  {
+    "id": "de_DE",
+    "language": "Deutsche",
+    "countryCode": {
+      "rawValue": "0049",
+      "displayValue": "Deutschland (+49)"
+    },
+    "iconUrl": "assets/images/flags/de.png",
+    "sortOrder": 9
+  },
+  {
+    "id": "it_IT",
+    "language": "italiano",
+    "countryCode": {
+      "rawValue": "0039",
+      "displayValue": "Italia (+39)"
+    },
+    "iconUrl": "assets/images/flags/it.png",
+    "sortOrder": 10
+  },
+  {
+    "id": "hu_HU",
+    "language": "Magyar",
+    "countryCode": {
+      "rawValue": "0036",
+      "displayValue": "Magyarország (+36)"
+    },
+    "iconUrl": "assets/images/flags/hu.png",
+    "sortOrder": 11
+  },
+  {
+    "id": "mc_MC",
+    "language": "Français",
+    "countryCode": {
+      "rawValue": "0377",
+      "displayValue": "Monaco (+377)"
+    },
+    "iconUrl": "assets/images/flags/mc.png",
+    "sortOrder": 12
+  }
+]

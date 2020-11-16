@@ -1,0 +1,95 @@
+nz-card {
+  background-color: white;
+  img {
+    width: 110px;
+    height: 110px;
+  }
+  margin-bottom: 20px;
+}
+
+nz-list {
+  background-color: white;
+  margin-bottom: 10px;
+}
+
+tbody {
+  background-color: white;
+}
+
+.main-wrapper {
+  margin: 50px auto;
+  max-width: 1250px;
+  min-width: 900px;
+  width: 100%;
+}
+
+.main-profile {
+  display: flex;
+  align-self: center;
+
+  &__image {
+    margin: 0px 5px 0px 0px;
+  }
+
+  &__list {
+    list-style-type: none;
+    padding: 0 0 0 10px;
+  }
+
+  &__content {
+    display: flex;
+    align-self: center;
+
+    * {
+      margin: 0px 5px 0px 0px;
+    }
+
+    &--primary {
+      font-size: 28px;
+      padding: 0px 0px 5px 0px;
+    }
+  }
+
+  &__content-attribute {
+    &--bold {
+      font-weight: bold;
+    }
+  }
+}
+
+.sub-profile, .security-profile, .last-login, .api-settings {
+  margin: 30px 0 0 0;
+
+  &__header {
+    font-size: 20px;
+  }
+
+  &__attribute {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+  }
+
+  &__attribute-name {
+    width: 290px;
+    font-weight: bold;
+  }
+  &__attribute-value {
+    width: 190px;
+  }
+  &__attribute-placeholder {
+    flex-grow: 1;
+    min-width: 200px;
+  }
+  button {
+    width: 90px;
+  }
+}
+
+.common-content-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  min-width: 1200px;
+}

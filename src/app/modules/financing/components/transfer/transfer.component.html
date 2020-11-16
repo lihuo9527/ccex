@@ -1,0 +1,51 @@
+<nz-modal nzWrapClassName="transfer-modal" [(nzVisible)]="isTransferPopupVisible"
+  nzTitle="{{ 'FINANCING.TRANSFER' | translate }} {{transferCoin}}" [nzFooter]="null" [nzWidth]="700"
+  style="min-width: 700px;" nzClosable="true" nzMaskClosable="true" (nzOnCancel)="transferWindowOnCancel()">
+  <div class="tips-box" *ngIf="localize.currentLanguage.id === 'zh_CN'">
+    <span>温馨提示：</span>
+    <span>划转操作发生在个人的总钱包和理财中心之间，不产生任何手续费且实时到账。</span>
+    <span>将理财中心的余额划转至理财中心之后方可进行提币。</span>
+  </div>
+  <div class="tips-box" *ngIf="localize.currentLanguage.id === 'en_US'">
+    <span>Tips：</span>
+    <span>Transfer is between personal Wallet and Financing Center, which is completely free and instant.</span>
+    <span>The coins can be withdrawn as normal once transferred to the Wallet.</span>
+  </div>
+  <div style="flex:0 0 100%;display: flex;justify-content: center;">
+    <div style="width: 100%;height:300px;" echarts [options]="balanceChartOption"></div>
+  </div>
+  <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
+    <nz-tab nzTitle="{{'FINANCING.TRANSFER_IN' | translate}}">
+      <ng-container>
+        <p>{{ 'FINANCING.MAXIMUM_TRANSFER_IN' | translate }}：
+          <span style="color:#F2E439;padding-right:5px;">{{walletBalance | truncateToPrecision}}</span>
+          <span>{{transferCoin}}</span>
+        </p>
+        <label class="amount-box">
+          <input nz-input type="text" style="flex:0 0 80%;text-align: right;" [(ngModel)]="transferInAmount"  (keyup)="forceTransferInAmountPrecision()">
+          <span>{{transferCoin}}</span>
+        </label>
+        <button nz-button nzType='primary' [nzLoading]="isTransferLoading" nzSize="large"
+          style="flex:0 0 100%;margin-top:20px;width: 100%;margin-bottom:30px;" (click)="transferIn()">
+          {{  'COMMON.CONFIRM' | translate }}
+        </button>
+      </ng-container>
+    </nz-tab>
+    <nz-tab nzTitle="{{'FINANCING.TRANSFER_OUT' | translate}}">
+      <ng-container>
+        <p>{{ 'FINANCING.MAXIMUM_TRANSFER_OUT' | translate }}：
+          <span style="color:#F2E439;padding-right:5px;">{{financingBalance | truncateToPrecision}}</span>
+          <span>{{transferCoin}}</span>
+        </p>
+        <label class="amount-box">
+          <input nz-input type="text" style="flex:0 0 80%;text-align: right;" [(ngModel)]="transferOutAmount"  (keyup)="forceTransferOutAmountPrecision()">
+          <span>{{transferCoin}}</span>
+        </label>
+        <button nz-button nzType='primary' [nzLoading]="isTransferLoading" nzSize="large"
+          style="flex:0 0 100%;margin-top:20px;width: 100%;margin-bottom:30px;" (click)="transferOut()">
+          {{  'COMMON.CONFIRM' | translate }}
+        </button>
+      </ng-container>
+    </nz-tab>
+  </nz-tabset>
+</nz-modal>

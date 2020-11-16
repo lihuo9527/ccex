@@ -1,0 +1,69 @@
+<div class="common-content-container">
+  <div class="commissions-container">
+    <div style="width:100%;flex: 0 0 100%;">
+      <img src="assets/images/events/holdglbgiftxrp_{{localize.currentLanguage.id === 'zh_CN' ? 'zh' : 'en'}}.png?t=201907242005" style="width:100%;">
+    </div>
+    <div class="commissions-box">
+      <p>
+        <a style="color:#0477ba;font-weight: bold;border-bottom: 1px solid #0477ba;"
+          routerLink="/events">{{ 'EVENT_CENTER.EVENTS' | translate }} </a>
+        <span style="font-weight: bold;color:#000;"> / {{'EVENT_CENTER.MY_AIR_DROP_COMMISSIONS' | translate}}</span>
+      </p>
+      <nz-table #commissionAirDropsTable nzSize="middle" [nzHideOnSinglePage]="true" [nzData]="commissionAirDrops"
+        [nzLoading]="isCommissionAirDropsTableLoading" (nzPageIndexChange)="fetchDailyCommissionAirDrops($event)"
+        [(nzPageIndex)]="pageIndex" [nzTotal]="commissionAirDropsTotal" [nzFrontPagination]="false" nzPageSize="30">
+        <thead (nzSortChange)="sortCommissionAirDrops($event)" nzSingleSort>
+          <tr>
+            <th nzShowSort nzSortKey="createdAt" style="text-align: center;width: 25%;">{{ 'COMMON.TIME' | translate }}</th>
+            <th style="text-align: center;width: 25%;">{{ 'WALLET.COIN' | translate }}</th>
+            <th nzShowSort nzSortKey="amount" style="padding-right: 22px; text-align: right;width: 25%;">
+              {{ 'COMMON.AMOUNT' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody style="background-color: white">
+          <ng-container *ngFor="let data of commissionAirDropsTable.data">
+            <tr>
+              <td style="text-align: center">{{data.createdAt | date:"yyyy/MM/dd"}}</td>
+              <td style="text-align: center;">{{data.coin}}</td>
+              <td style="padding-right: 22px; text-align: right">{{data.amount}}</td>
+              <td style="text-align: center;">
+                <a (click)="openDetailWindow(data.createdAt)">{{ 'FINANCING.DETAILS' | translate}}</a>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>
+
+<!-- commission detail window-->
+<nz-modal [(nzVisible)]="isCommissionDetailPopupVisible" nzWrapClassName="bonus-record-modal"
+  nzTitle="{{currentCreatedAt | date:'yyyy/MM/dd'}}  {{ 'EVENT_CENTER.COMMISSION_AIR_DROP_DETAILS' | translate }}"
+  [nzFooter]="null" [nzWidth]="550" nzClosable="true" nzMaskClosable="true"
+  (nzOnCancel)="isCommissionDetailPopupVisible=false">
+  <nz-table #commissionAirDropDetailsTable nzSize="middle" [nzHideOnSinglePage]="true"
+    [nzData]="commissionAirDropDetails" nzPageSize="50" [nzLoading]="isDetailsTableLoading" [nzFrontPagination]="false">
+    <thead (nzSortChange)="sortCommissionDetails($event)" nzSingleSort>
+      <tr>
+        <th style="width: 150px">{{ 'COMMON.USER' | translate }}</th>
+        <th style="width: 120px; text-align: center">
+          {{ 'EVENT_CENTER.RANK' | translate }}</th>
+        <th nzShowSort nzSortKey="amount" style="text-align: right;">
+          {{ 'COMMON.AMOUNT' | translate }}</th>
+        <th style="text-align: right">{{ 'WALLET.COIN' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody style="background-color: white">
+      <ng-container *ngFor="let data of commissionAirDropDetailsTable.data">
+        <tr>
+          <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{data.reason.fromInvitee.inviteeDisplayName}}</td>
+          <td style="text-align: center">{{data.reason.fromInvitee.inviteeGeneration}}</td>
+          <td style="text-align: right">{{data.amount | truncateToPrecision}} </td>
+          <td style="text-align: right">{{data.coin}}</td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </nz-table>
+</nz-modal>

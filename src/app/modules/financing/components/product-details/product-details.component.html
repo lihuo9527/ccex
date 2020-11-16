@@ -1,0 +1,80 @@
+<div class="container">
+  <div class="breadcrumb-box">
+    <nz-breadcrumb class="breadcrumb">
+      <nz-breadcrumb-item>
+        <a routerLink="/financing/products_on_sale">{{ 'FINANCING.PRODUCTS_ON_SALE' | translate }}</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{ coin }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+  <div class="product-details-box" *ngIf="!isReady">
+    <div class="chart-loading"></div>
+  </div>
+  <div class="product-details-box" *ngIf="isReady">
+    <div echarts class="circular-box" [options]="chartOption">
+    </div>
+    <div class="purchase-box">
+      <h3 style="margin-bottom:50px;">
+        <i nz-icon type="dollar" theme="outline"></i>
+        {{ 'FINANCING.MY' | translate }} {{coin}} {{ 'FINANCING.BALANCE' | translate }} {{Balance}} {{coin}}
+      </h3>
+      <h3 style="margin-bottom:40px;">{{ 'FINANCING.PURCHASE_AMOUNT' | translate }}：
+        <input nz-input style="width:200px;" type="text" (keyup)="forceAmountPrecision()" [(ngModel)]="purchaseAmount">
+        {{coin}}
+      </h3>
+      <h3 style="margin-bottom:40px;">
+        {{ 'FINANCING.BALANCE_AFTER_PURCHASE' | translate }}
+        <span [ngClass]="{'red':balance - purchaseAmount < 0 }"> {{BalanceAfterPurchase}} </span> {{coin}}
+      </h3>
+      <button nz-button class="purchase-btn" [nzType]="'primary'" [nzLoading]="isPurchaseBtnLoading"
+        (click)="purchase()">{{ 'FINANCING.PURCHASE' | translate }}</button>
+      <p>{{ 'FINANCING.INSUFFICIENT_BALANCE' | translate }}?
+        <a style="color:crimson;border-bottom:1px solid crimson;"
+          (click)="tryTransfer()">{{ 'FINANCING.TRANSFER' | translate }}</a>
+      </p>
+    </div>
+    <div class="product-table">
+      <table style="flex:0 0 100%;">
+        <thead>
+          <tr>
+            <th>{{ 'FINANCING.PRODUCT' | translate }}</th>
+            <th>{{ 'FINANCING.PRODUCT_CODE' | translate }}</th>
+            <th>{{ 'WALLET.COIN' | translate }}</th>
+            <th>{{ 'FINANCING.AVAILABLE_AMOUNT' | translate }}</th>
+            <th>{{ 'FINANCING.MIN_PURCHASE_AMOUNT' | translate }}</th>
+            <th>{{ 'FINANCING.TERM' | translate }}</th>
+            <!-- <th>{{ 'FINANCING.RISK' | translate }}</th> -->
+          </tr>
+        </thead>
+        <tbody style="background-color: white">
+          <tr>
+            <td *ngIf="localize.currentLanguage.id === 'en_US'">{{ product.name }}</td>
+            <td *ngIf="localize.currentLanguage.id === 'zh_CN'">{{ product.name_zh }}</td>
+            <td>{{ product.id }}</td>
+            <td>{{ product.coin }}</td>
+            <td>
+              <span *ngIf="product.filledType ==='gt'">{{ 'FINANCING.MORE_THAN' | translate }}</span>
+              <span *ngIf="product.filledType ==='lt'">{{ 'FINANCING.LESS_THAN' | translate }}</span>
+              <span *ngIf="localize.currentLanguage.id === 'zh_CN'"
+                style="padding-left:5px;">{{ product.availableAmount / 10000 }} 万</span>
+              <span *ngIf="localize.currentLanguage.id === 'en_US'"
+                style="padding-left:5px;">{{ product.availableAmount / 1000000 }} M</span>
+            </td>
+            <td>{{ product.minPurchaseAmount }} {{coin}}</td>
+            <td>{{ product.term }}</td>
+            <!-- <td>{{ product.riskLevel }}</td> -->
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="isReady && localize.currentLanguage.id === 'en_US'" class="product-description-box" [innerHTML]="product.description"></div>
+  <div *ngIf="isReady && localize.currentLanguage.id === 'zh_CN'" class="product-description-box" [innerHTML]="product.description_zh"></div>
+  
+  <ccex-transfer *ngIf="isTransferPopupVisible" [isTransferPopupVisible]="isTransferPopupVisible" [transferCoin]="coin"
+    (onCancel)="transferWindowOnCancel($event)" [walletBalance]="walletBalance" [financingBalance]="balance">
+  </ccex-transfer>
+</div>

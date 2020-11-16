@@ -1,0 +1,269 @@
+<div class="common-content-container">
+  <div style="margin: 60px auto; padding: 0 10px; max-width: 1270px; min-width: 900px;width:100%;">
+    <div id="asset-value" class="has-shadow">
+      <h2>{{ 'WALLET.ASSET_VALUE' | translate }}</h2>
+      <h1 style="margin-top: 30px">$ {{ TotalFiatValue }}</h1>
+      <h3 style="margin-top: 2px">≒ {{ TotalBtcValue }} BTC</h3>
+      <h4 style="margin-top: 30px">{{ 'WALLET.CURRENT_FX' | translate }}: BTC/USD = {{ BtcFiatPrice }}</h4>
+    </div>
+
+    <!-- Pending Deposits -->
+    <h1 class="table-title">{{ 'WALLET.PENDING_DEPOSIT' | translate }}</h1>
+    <div class="has-shadow">
+      <nz-table #pendingDepositTable nzSize="middle" [nzPageSize]="pendingDeposit.length" [nzHideOnSinglePage]="true" [nzData]="pendingDeposit" [nzLoading]="isRecordsLoading">
+        <thead>
+          <tr>
+            <th style="width: 180px">{{ 'COMMON.TIME' | translate }}</th>
+            <th style="width: 150px" class="text-center">{{ 'WALLET.COIN' | translate }}</th>
+            <th class="text-center">{{ 'COMMON.AMOUNT' | translate }}</th>
+            <th class="text-center">{{ 'WALLET.BLOCKCHAIN' | translate }}{{ 'COMMON.RECORDS' | translate }}</th>
+            <th style="width: 100px" class="text-center">{{ 'COMMON.STATUS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody style="background-color: white">
+          <tr *ngFor="let data of pendingDepositTable.data">
+            <td>{{data.Datetime}}</td>
+            <td class="text-center">{{data.coinSymbol}} ({{data.coinName}})</td>
+            <td class="text-center">{{data.amount | truncateAsStringToPrecision: 6 }}</td>
+            <td class="text-center">{{data.txid}}</td>
+            <td class="text-center">{{ 'COMMON.IN_PROCESS' | translate }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+
+    <!-- Tab buttons -->
+    <div style="margin-top: 60px; height: 52px">
+      <!-- <a routerLink="/wallet/balance" [class]="currentTabId === 0? 'tab-button tab-button-active' : 'tab-button tab-button-inactive'" style="margin-left: 20px">Asset portfolio</a>
+      <a routerLink="/wallet/deposit" [class]="currentTabId === 1? 'tab-button tab-button-active' : 'tab-button tab-button-inactive'">Deposit records</a>
+      <a routerLink="/wallet/withdraw" [class]="currentTabId === 2? 'tab-button tab-button-active' : 'tab-button tab-button-inactive'">Withdraw records</a> -->
+      <a (click)="onTab(0)" [class]="currentTabId === 0? 'tab-button tab-button-active' : 'tab-button tab-button-inactive'">{{ 'WALLET.MY_PORTFOLIO' | translate }}</a>
+      <a (click)="onTab(1)" [class]="currentTabId === 1? 'tab-button tab-button-active' : 'tab-button tab-button-inactive'">{{ 'WALLET.DEPOSIT' | translate }}{{ 'COMMON.RECORDS' | translate }}</a>
+      <a (click)="onTab(2)" [class]="currentTabId === 2? 'tab-button tab-button-active' : 'tab-button tab-button-inactive'">{{ 'WALLET.WITHDRAW' | translate }}{{ 'COMMON.RECORDS' | translate }}</a>
+
+      <nz-input-group id="coin-search" nzPrefixIcon="anticon anticon-search">
+        <input id="searchbox" type="text" placeholder="BTC, ETH, USDT..." [value]="keyword" (keyup)="filter($event)">
+      </nz-input-group>
+      <!-- <ng-container *ngIf="currentTabId !== 0">
+        <button nz-button id="export-button"><i class="anticon anticon-download"></i>{{ 'COMMON.EXPORT' | translate }}</button>
+      </ng-container> -->
+    </div>
+
+    <div class="has-shadow">
+      <div style="width: 100%; height: 4px; background-color: #353B41"></div>
+
+      <!-- Asset Portfolio -->
+      <ng-container *ngIf="currentTabId === 0">
+        <nz-table #assetPortfolioTable nzSize="middle" [nzPageSize]="assetPortfolio.length" [nzHideOnSinglePage]="true" [nzData]="assetPortfolio" [nzLoading]="isPortfolioLoading">
+          <thead (nzSortChange)="sortPortfolio($event)" nzSingleSort>
+            <tr>
+              <th style="width: 230px" nzShowSort nzSortKey="sortOrder">{{ 'WALLET.COIN' | translate }}</th>
+              <th style="width: 170px" nzShowSort nzSortKey="amount">{{ 'COMMON.AMOUNT' | translate }}</th>
+              <th style="width: 170px" nzShowSort nzSortKey="free">{{ 'WALLET.AVAILABLE' | translate }}</th>
+              <th style="width: 170px" nzShowSort nzSortKey="frozen">{{ 'WALLET.FREEZE' | translate }}</th>
+              <!-- <th style="width: 170px" class="text-center" nzShowSort nzSortKey="totalValue">Total Value</th> -->
+              <th style="width: 340px" class="text-center">{{ 'COMMON.OPERATION' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody style="background-color: white">
+            <ng-container *ngFor="let data of assetPortfolioTable.data">
+              <tr *ngIf="data.isVisible" style="height: 60px;">
+                <td>{{data.coinSymbol}} ({{data.coinName}})</td>
+                <td>{{data.amount | truncateAsStringToPrecision: 6}}</td>
+                <td>{{data.free | truncateAsStringToPrecision: 6}}</td>
+                <td>{{data.frozen | truncateAsStringToPrecision: 6}}</td>
+                <!-- <td class="text-center">{{data.totalValue}}</td> -->
+                <td class="text-center">
+                  <a *ngIf="data.canDeposit" (click)="deposit(data.coinSymbol)" class="deposit">{{ 'WALLET.DEPOSIT' | translate }}</a>
+                  <a *ngIf="!data.canDeposit" disabled class="deposit">{{ 'WALLET.DEPOSIT' | translate }}</a>
+                  <nz-divider nzType="vertical"></nz-divider>
+                  <a *ngIf="data.canWithdraw" (click)="enterWithdraw(data.coinSymbol)" class="deposit">{{ 'WALLET.WITHDRAW' | translate }}</a>
+                  <a *ngIf="!data.canWithdraw" disabled class="deposit">{{ 'WALLET.WITHDRAW' | translate }}</a>
+                  <nz-divider nzType="vertical"></nz-divider>
+                  <nz-dropdown [nzPlacement]="'bottomLeft'">
+                    <a nz-dropdown class="trade-button">{{ 'COMMON.TRADE' | translate }}</a>
+                    <ul nz-menu>
+                      <ng-container *ngFor="let pair of data.pairs">
+                        <li nz-menu-item>
+                          <a href="/trade/{{pair.raw}}">{{pair.display}}</a>
+                        </li>
+                      </ng-container>
+                    </ul>
+                  </nz-dropdown>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </nz-table>
+      </ng-container>
+
+      <!-- Deposit Record -->
+      <ng-container *ngIf="currentTabId === 1">
+        <nz-table #depositRecordsTable nzSize="middle" [nzPageSize]="10" [nzHideOnSinglePage]="true" [nzData]="depositRecords" [nzLoading]="isRecordsLoading">
+          <thead>
+            <tr>
+              <th style="width: 180px">{{ 'COMMON.TIME' | translate }}</th>
+              <th style="width: 150px" class="text-center">{{ 'WALLET.COIN' | translate }}</th>
+              <th class="text-center">{{ 'COMMON.AMOUNT' | translate }}</th>
+              <th class="text-center">Txid</th>
+              <th style="width: 100px" class="text-center">{{ 'COMMON.STATUS' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody style="background-color: white">
+            <ng-container *ngFor="let data of depositRecordsTable.data">
+              <tr *ngIf="data.isVisible" style="height: 60px;">
+                <td>{{data.Datetime}}</td>
+                <td class="text-center">{{data.coinSymbol}} ({{data.coinName}})</td>
+                <td class="text-center">{{data.amount | truncateAsStringToPrecision: 6 }}</td>
+                <td class="text-center">{{data.txid}}</td>
+                <td class="text-center">{{ 'COMMON.SUCCESS' | translate }}</td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </nz-table>
+      </ng-container>
+
+      <!-- Withdraw Record -->
+      <ng-container *ngIf="currentTabId === 2">
+        <nz-table #withdrawRecordsTable nzSize="middle" [nzPageSize]="10" [nzHideOnSinglePage]="true" [nzData]="withdrawRecords" [nzLoading]="isRecordsLoading">
+          <thead>
+            <tr>
+              <th style="width: 180px">{{ 'COMMON.TIME' | translate }}</th>
+              <th style="width: 150px" class="text-center">{{ 'WALLET.COIN' | translate }}</th>
+              <th style="min-width: 100px" class="text-center">{{ 'COMMON.AMOUNT' | translate }}</th>
+              <th class="text-center">{{ 'WALLET.WITHDRAW' | translate }}{{ 'COMMON.ADDRESS' | translate }}</th>
+              <th class="text-center">Txid</th>
+              <th style="width: 100px" class="text-center">{{ 'COMMON.STATUS' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody style="background-color: white">
+            <ng-container *ngFor="let data of withdrawRecordsTable.data">
+              <tr *ngIf="data.isVisible" style="height: 60px;">
+                <td>{{data.Datetime}}</td>
+                <td class="text-center">{{data.coinSymbol}} ({{data.coinName}})</td>
+                <td class="text-center">{{data.amount}}</td>
+                <td class="text-center">{{data.address}}</td>
+                <td class="text-center">{{data.txid}}</td>
+                <td class="text-center">{{ data.status | translate }}</td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </nz-table>
+      </ng-container>
+
+      <!-- Deposit Window -->
+      <nz-modal nzWrapClassName="vertical-center-modal" [(nzVisible)]="isDepositPopupVisible" nzTitle="{{ 'WALLET.DEPOSIT' | translate }}"  [nzFooter]="null" [nzWidth]="1100" nzClosable="true" nzMaskClosable="true" (nzOnCancel)="onDepositPopupClose()">
+         <h2>{{ depositObj.info.id }}</h2>
+         <div class="tips-box" *ngIf="localize.currentLanguage.id === 'zh_CN'">
+           <span>温馨提示：</span>
+           <span>请勿向上述地址充值任何非 <b>{{ depositObj.info.id }}</b> 资产，否则资产将不可找回。 </span>
+           <span>您充值至上述地址后，需要整个网络节点的确认，{{ depositObj.info.first }}次网络确认后到账，{{ depositObj.info.last }}次网络确认后可提币。</span>
+           <span>最小充值金额：<b>{{ depositObj.info.minDeposit }}</b>，小于最小金额的充值将不会上账且无法退回。</span>
+         </div>
+         <div class="tips-box" *ngIf="localize.currentLanguage.id === 'en_US'">
+           <span>Tips：</span>
+           <span>Please don't deposit any other digital assets except <b>{{ depositObj.info.id }}</b> to the above address.</span>
+           <span>Depositing to the above address requires confirmations of the entire network. It will arrive after {{ depositObj.info.first }} confirmations, and it will be available to withdraw after {{ depositObj.info.last }} confirmations.</span>
+           <span>Minimum deposit amount: <b>{{ depositObj.info.minDeposit }}</b>. Any deposits less than the minimum will not be credited or refunded.</span>
+         </div>
+         <div class="qrCode-box">
+           <nz-spin *ngIf="isDepositAddressLoading" [nzSize]="'large'"> </nz-spin>
+           <qrcode  *ngIf="!isDepositAddressLoading" [qrdata]="depositObj.url" [size]="128" [level]="'M'"></qrcode>
+         </div>
+         <div class="key-box">
+           <span style="flex:0 0 100%;font-size: 15px;color:#101315;font-weight: 600;">{{ 'WALLET.DEPOSIT_ADDRESS' | translate }}</span>
+           <span nz-input class="key">{{ depositObj.url }}</span>
+         </div>
+         <div *ngIf="depositObj.info.id === 'XRP'" class="key-box">
+           <span style="flex:0 0 100%;font-size: 15px;color:#F04A5D;font-weight: 600;">{{ 'WALLET.DESTINATION_TAG' | translate }}</span>
+           <span nz-input class="key is-dropping">{{ depositObj.tag }}</span>
+         </div>
+         <div *ngIf="depositObj.info.id === 'EOS'" class="key-box">
+           <span style="flex:0 0 100%;font-size: 15px;color:#F04A5D;font-weight: 600;">{{ 'WALLET.EOS_MEMO' | translate }}</span>
+           <span nz-input class="key is-dropping">{{ depositObj.tag }}</span>
+         </div>
+         <div class="mark-box" *ngIf="localize.currentLanguage.id === 'zh_CN'">
+           <p *ngIf="depositObj.info.id === 'USDT'">• USDT充币仅支持simple send的方法，使用其他方法（send all）的充币暂时无法上账，请您谅解。</p>
+           <p *ngIf="depositObj.info.id === 'XRP'" class="is-dropping">• 请务必填写并仔细核对地址标签，这是您账户的唯一标识，否则资产将不可找回。</p>
+           <p>• 您的充值地址不会经常改变，可以重复充值；如有更改，我们会尽量通过网站公告或邮件通知您。</p>
+           <p>• 请务必确认电脑及浏览器安全，防止信息被篡改或泄露。</p>
+         </div>
+         <div class="mark-box" *ngIf="localize.currentLanguage.id === 'en_US'">
+           <p *ngIf="depositObj.info.id === 'USDT'">• USDT deposit only supports simple send, and deposits by other methods （send all）can't be credited temporarily. We apologize for the inconvenience.</p>
+           <p *ngIf="depositObj.info.id === 'XRP'" class="is-dropping">• Please fill in destination tag and check carefully. This is the only identification of your account, otherwise you may lose it permanently.</p>
+           <p>• Your deposit address won't change frequently. Any changes, we will inform you by announcement or email.</p>
+           <p>• Please make sure that your computer and browser are secure and your information is protected from being tampered or leaked.</p>
+         </div>
+      </nz-modal>
+
+       <!-- Withdraw Window -->
+      <nz-modal nzWrapClassName="vertical-center-modal" [(nzVisible)]="isWithdrawPopupVisible" nzTitle="{{ 'WALLET.WITHDRAW' | translate }}"  [nzFooter]="null" [nzWidth]="860" nzClosable="true" nzMaskClosable="true" (nzOnCancel)="onWithdrawPopupClose()">
+         <h2>{{ withdrawObj.id }}</h2>
+         <div class="tips-box" *ngIf="localize.currentLanguage.id === 'zh_CN'">
+           <span>温馨提示：</span>
+           <span>最小提币数量为：{{withdrawObj.info.minWithdraw}} {{ withdrawObj.id }}。</span>
+           <span>为保障资金安全，当您账户安全策略变更、密码修改、我们会对提币进行人工审核，请耐心等待工作人员电话或邮件联系。</span>
+           <span>请务必确认电脑及浏览器安全，防止信息被篡改或泄露。</span>
+         </div>
+         <div class="tips-box" *ngIf="localize.currentLanguage.id === 'en_US'">
+           <span>Tips：</span>
+           <span>Minimum withdrawal amount: {{withdrawObj.info.minWithdraw}}.</span>
+           <span>To ensure the safety of your funds, your withdrawal request will be manually reviewed if your security strategy or password is changed. Please wait for phone calls or emails from our staff.</span>
+           <span>Please make sure that your computer and browser are secure and your information is protected from being tampered or leaked.</span>
+         </div>
+         <div class="withdraw-box">
+           <label class="address-box">
+              <b style="font-size:13px;">{{ withdrawObj.id }} {{ 'WALLET.WITHDRAW_ADDRESS' | translate }}</b>
+              <input nz-input type="text" [disabled]="withdrawInputDisabled" [(ngModel)]="withdrawObj.address">
+           </label>
+           <label class="address-box" *ngIf="withdrawObj.id === 'XRP'">
+              <b style="font-size:13px;">{{ 'WALLET.DESTINATION_TAG' | translate }}</b>
+              <input nz-input type="text" [disabled]="withdrawInputDisabled" [(ngModel)]="withdrawObj.tag">
+           </label>
+           <label class="address-box" *ngIf="withdrawObj.id === 'EOS'">
+              <b style="font-size:13px;">{{ 'WALLET.EOS_MEMO' | translate }}</b>
+              <input nz-input type="text" [disabled]="withdrawInputDisabled" [(ngModel)]="withdrawObj.tag">
+           </label>
+           <label class="amount-box">
+              <b style="flex:0 0 60%;">{{ 'WALLET.WITHDRAW_AMOUNT' | translate }} (24h {{ 'WALLET.WITHDRAWAL_LIMIT' | translate }}: {{withdrawObj.info.dailyAvailable}} / 500 BTC)</b>
+              <b style="flex:0 0 40%;text-align: right;">{{ 'WALLET.AVAILABLE_BALANCE' | translate }}: {{withdrawObj.info.available | truncateAsStringToPrecision}}</b>
+              <input nz-input type="number" style="flex:0 0 80%;" [disabled]="withdrawInputDisabled" [(ngModel)]="withdrawObj.amount" (ngModelChange)="checkWithdrawAmout()">
+              <span>{{ withdrawObj.id }}</span>
+           </label>
+           <div class="text-box">
+              <span>{{ 'WALLET.SERVICE_CHARGE' | translate }}: {{withdrawObj.info.fee}}</span>
+              <span style="text-align: right;" [ngClass]="{'is-dropping':withdrawObj.actualArrival<0}">{{ 'WALLET.ACTUAL_ARRIVAL' | translate }}: {{withdrawObj.actualArrival | truncateAsStringToPrecision}}</span>
+           </div>
+           <button nz-button nzType='primary' [nzLoading]="isWithdrawLoading" nzSize="large" style="flex:0 0 100%;margin-top:20px;" (click)="tryWithdraw()"> {{  'COMMON.CONFIRM' | translate }} </button>
+         </div>
+         <div *ngIf="localize.currentLanguage.id === 'zh_CN'"  class="mark-container">
+            <p *ngIf="withdrawObj.id === 'ETH'" class="mark">
+              <span>• 请不要直接提币到ICO的众筹地址，这会导致您无法收取众筹到的数字资产。</span>
+              <span>• 提币到合约地址可能会发生合约执行失败，将导致转账失败，资产将退回。我们会人工处理退回到原账户，处理时间较长，请您谅解。</span>
+              <span>• 网络转账费用是不固定的，取决于转账时合约执行需要消耗的算力。当前我们为提币支付的Gas Limit为90000，用于执行转账或合约执行。如果此次交易消耗超过90000 gas，将导致转账失败，资产将退回。我们会人工处理退回到原账户，请您谅解。</span>
+            </p>
+            <p *ngIf="withdrawObj.id === 'EOS'">
+                <span> • 请确认目标提币地址是否存在且被激活，否则将会导致提币失败，且资产不可找回。请务必仔细核对备注(地址标签)，否则将造成资产损失并不可找回。</span>
+            </p>
+            <p *ngIf="withdrawObj.id === 'XRP'" class="is-dropping">
+                <span> • 请务必填写并仔细核对地址标签，这是您账户的唯一标识，否则资产将不可找回。</span>
+            </p>
+          </div>
+          <div *ngIf="localize.currentLanguage.id === 'en_US'" class="mark-container">
+            <p *ngIf="withdrawObj.id === 'ETH'" class="mark">
+                <span>• If you deposit ETH to participate ICO and ICO tokens will be distributed to your deposit address, Please don't withdraw ETH to it or you won't get your ICO tokens.</span>
+                <span>• Withdrawal to the contract address may result in contract execution failure, which will lead to transfer failure and the asset will be returned. We will return the asset to the original account manually, but it will take a longer time. Your understanding will be greatly appreciated. </span>
+                <span>• Network transfer fee is not fixed as it depends on the hash power required to execute the contract during the transfer. Currently, the Gas Limit of a deposit is 90,000 to execute the transfer or contract. If the transaction consumes more than 90,000 gas, the transfer will fail and the assets will be returned. We will manually return it to the original account. Please understand.</span>
+            </p>
+            <p *ngIf="withdrawObj.id === 'EOS'">
+              <span>• Please confirm the destination address, memo(destination tag) exist and are activated, otherwise the withdrawal will fail and assets will not be recoverable.</span>
+            </p>
+            <p *ngIf="withdrawObj.id === 'XRP'" class="is-dropping">
+              <span>• Please fill in destination tag and check carefully. This is the only identification of your account, otherwise you may lose it permanently.</span>
+            </p>
+         </div>
+      </nz-modal>
+    </div>
+    <ccex-google-validate [isLoading]="isGoogleValidateLoading" (validateEvent)="withdraw($event)"> </ccex-google-validate>
+  </div>
+</div>

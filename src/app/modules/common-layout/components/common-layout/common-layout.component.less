@@ -1,0 +1,141 @@
+nz-affix {
+  min-width: 1200px;
+  z-index: 3;
+  width: 100%;
+  height: 38px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #182027;
+  display: flex;
+  align-items: center;
+  color: #F2E439;
+  .text-label {
+    height: 100%;
+    padding:12px 18px;
+    font-size: 12px;
+    line-height: 14px;
+  }
+}
+
+.flag {
+  width: 24px;
+  margin: 0 4px;
+}
+
+nz-content {
+  min-height: 1080px;
+}
+
+nz-header {
+  width: 100%;
+  min-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  flex-flow: nowrap;
+}
+
+#buttons {
+  float: right;
+
+  button {
+    width: 90px;
+    height: 36px;
+    margin: 0 5px;
+  }
+}
+
+.logo {
+  width: 142px;
+  float: left;
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.ant-menu {
+  height: 60px;
+  font-size: 16px;
+}
+
+.ant-menu-item-selected {
+  color: #F2E439;
+}
+
+nz-footer {
+  min-width: 1200px;
+  padding: 0;
+  .main-footer {
+    height: 85px;
+    padding: 30px;
+
+    span {
+      color: white;
+      font-size: 14px;
+      margin-right: 40px;
+    }
+
+    #sns-icons {
+      float: right;
+      img {
+        width: 30px;
+        height: 30px;
+        margin-right: 20px;
+      }
+    }
+  }
+
+  .sub-footer {
+    height: 38px;
+    background-color: #182027;
+    color: #CAD3DD;
+    text-align: center;
+    padding: 12px 0;
+    line-height: 12px;
+    font-size: 12px;
+  }
+}
+
+#support-telegram {
+  position: fixed;
+  bottom: 100px;
+  right: 60px;
+}
+
+.invite-rebate:hover, .account:hover, .two-level-menu li:hover , .financingTwoLevelMenu li:hover {
+  > a, > i {
+    cursor: pointer;
+    color: #F2E439 !important;
+  }
+}
+
+.two-level-menu , .financingTwoLevelMenu {
+  position: absolute;
+  top: 50px;
+  left: 18px;
+  color:#fff;
+  list-style: none;
+  z-index: 3;
+  padding-left: 0px;
+}
+
+.two-level-menu > li {
+  width: 135px;
+}
+
+.two-level-menu > li , .financingTwoLevelMenu > li {
+  background: #353b41;
+  display: flex;
+}
+
+.financingTwoLevelMenu > li {
+  padding-right: 35px;
+}
+
+.two-level-menu > li > a , .financingTwoLevelMenu > li > a {
+  padding-left: 20px;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+}

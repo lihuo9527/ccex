@@ -1,0 +1,26 @@
+<div id="googleValidate" style="display: none;">
+  <div class="shadow"></div>
+  <div class="validate-container">
+    <i nz-icon type="close" theme="outline" class="close" (click)="close()"></i>
+    <div style="display:flex;width:100%;flex-flow: wrap;">
+      <h3 class="validate-title"> {{ 'USER.GOOGLE_TWO_STEP' | translate }} </h3>
+      <div style="width:100%;display:flex;justify-content:center;flex-flow: wrap;">
+        <div style="flex:0 0 100%;height: 120px;">
+          <label class="validate-box">
+            <span class="validate-text">{{ 'USER.INPUT_TWO_STEP_CODE' | translate }}</span>
+            <input [ngClass]="{'input-invalid':isInvalid===true}" type="text" nz-input style="flex:0 0 50%;"
+              [(ngModel)]="verifyCode" (ngModelChange)="validateValue($event)">
+          </label>
+          <div style="display: flex;justify-content: center;flex:0 0 100%;">
+            <span *ngIf="isInvalid" class="is-dropping" style="flex:0 0 50%;font-size:12px;">{{ 'USER.CODE_INVALID' |
+              translate }}</span>
+          </div>
+        </div>
+        <div style="display: flex;justify-content: center;flex:0 0 100%;margin-bottom: 20px;">
+          <button nz-button [nzLoading]="isLoading" nzType="primary" nzSize="large" style="flex:0 0 50%;" (click)="sendVerifyCode()">
+            {{ 'COMMON.CONFIRM' | translate }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

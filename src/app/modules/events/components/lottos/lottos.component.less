@@ -1,0 +1,55 @@
+.lottos-container {
+    width: 100%;
+    min-width: 900px;
+    display: flex;
+    justify-content: center;
+    flex-flow: wrap;
+}
+
+.lottos-box {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    align-items: center;
+    flex-flow: wrap;
+
+    margin: 30px 50px 260px 50px;
+}
+
+.bonus-box {
+    background: #fff;
+    display: flex;
+    flex-flow: wrap;
+    padding: 10px;
+    border: 1px solid #eee;
+    width: 100%;
+    div {
+        display: flex;
+        width: 100%;
+        padding: 10px;
+        align-items: center;
+    }
+}
+
+.lottos-table {
+    flex: 0 0 100%;
+    width: 100%;
+    display: flex;
+    flex-flow: wrap;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.lottos-table {
+    ::ng-deep nz-table {
+        padding: 0;
+        width: 100%;
+        thead>th,
+        tbody>tr>td {
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #eee;
+            text-align: center;
+        }
+    }
+}

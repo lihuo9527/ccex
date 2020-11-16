@@ -1,0 +1,32 @@
+<div class="common-content-container">
+    <div class="ranking-container">
+      <div style="width:100%;flex: 0 0 100%;">
+        <img src="https://via.placeholder.com/1440x500" style="width:100%;">
+      </div>
+      <div class="ranking-box">
+        <p>
+          <span style="font-weight: bold;color:#000;"> {{'EVENT_CENTER.RANKINGS' | translate}}</span>
+        </p>
+        <nz-table #rankingsTable nzSize="middle" [nzHideOnSinglePage]="true" [nzData]="rankings"
+          [nzLoading]="isRankingsTableLoading" [nzFrontPagination]="false">
+          <thead>
+            <tr>
+              <th style="text-align: center;"></th>
+              <th style="text-align: center;">{{ 'COMMON.USER' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody style="background-color: white">
+            <ng-container *ngFor="let data of rankingsTable.data">
+              <tr>
+                <td>
+                  <span *ngIf="data.rank > 3">{{data.rank}}</span>
+                  <i *ngIf="data.rank < 4" nz-icon type="crown" theme="outline" [ngClass]="{'first' : data.rank === 1, 'second': data.rank === 2, 'third':  data.rank === 3}" style="font-size: 22px;"></i>
+                </td>
+                <td style="text-align: center;">{{data.userDisplayName}}</td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </nz-table>
+      </div>
+    </div>
+  </div>

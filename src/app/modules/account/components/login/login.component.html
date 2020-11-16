@@ -1,0 +1,47 @@
+<div class="common-content-container">
+  <div style="width: 100%; min-width: 900px;">
+    <div id="main-wrapper" class="has-shadow">
+      <h2>{{ 'COMMON.LOGIN' | translate }}</h2>
+      <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+        <div>
+          <div>
+            {{ 'USER.EMAIL' | translate }}
+            <nz-divider nzType="vertical"></nz-divider>
+            <a [routerLink]="['/account/login_phone', { returnUrl: returnUrl }]">{{ 'USER.USE_PHONE' | translate }}</a>
+          </div>
+        </div>
+        <nz-form-item>
+          <nz-form-control>
+            <nz-input-group nzPrefixIcon="anticon anticon-user">
+              <input type="email" autocomplete="username" name="email" nz-input formControlName="email" placeholder="{{ 'USER.EMAIL_PLZ' | translate }}">
+            </nz-input-group>
+            <nz-form-explain *ngIf="validateForm.get('email').dirty && validateForm.get('email').errors">{{ 'USER.EMAIL_INVALID' | translate }}</nz-form-explain>
+          </nz-form-control>
+        </nz-form-item>
+        <div style="margin-top: 30px">
+          <span>{{ 'USER.PASSWORD' | translate }}</span>
+          <a style="float: right" routerLink="/account/password-forget_email">{{ 'USER.FORGET_PASSWORD' | translate }}</a>
+        </div>
+        <nz-form-item>
+          <nz-form-control>
+            <nz-input-group nzPrefixIcon="anticon anticon-lock">
+              <input type="password" name="password" nz-input formControlName="password" placeholder="{{ 'USER.PASSWORD_PLZ' | translate }}">
+            </nz-input-group>
+            <nz-form-explain *ngIf="validateForm.get('password').dirty && validateForm.get('password').errors">{{ 'USER.PASSWORD_INVALID' | translate }}</nz-form-explain>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item style="margin-top: 80px">
+          <nz-form-control>
+            <button nz-button [nzType]="'primary'" [nzLoading]="isLoading()">{{ 'COMMON.LOGIN' | translate }}</button>
+            <p style="text-align: center; margin-top: 48px">
+              {{ 'USER.NOT_USER_YET' | translate }}
+              <a routerLink="/account/signup">{{ 'USER.SIGNUP_NOW' | translate }}</a>
+            </p>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </div>
+    </div>
+</div>
+
+<ccex-google-validate [isLoading]="isGoogleValidateLoading" (validateEvent)="onGoogleValidate($event)"> </ccex-google-validate>

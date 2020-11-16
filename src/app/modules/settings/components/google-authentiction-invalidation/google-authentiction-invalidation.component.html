@@ -1,0 +1,32 @@
+<nz-modal [(nzVisible)]="isVisible" nzTitle="{{ 'USER.DISABLE_GA' | translate }}" nzWrapClassName="vertical-center-modal"
+  [nzFooter]="null" [nzWidth]="800" nzClosable="true" (nzOnCancel)="close()">
+  <nz-steps [nzCurrent]="currentStep">
+    <nz-step nzTitle="{{ 'USER.VERIFY_CODE' | translate }}"></nz-step>
+    <nz-step nzTitle="{{ 'COMMON.RESULT' | translate }}"></nz-step>
+  </nz-steps>
+
+  <div class="vertical-center-modal__step-content-wrapper">
+    <div class="vertical-center-modal__step-content" [ngSwitch]="currentStep">
+      <div *ngSwitchCase="0" style="width:100%;">
+        <label class="check-box">
+          {{ 'USER.INPUT_TWO_STEP_CODE' | translate }}
+          <input [ngClass]="{'input-invalid':isInvalid===true}" nz-input type="text" [(ngModel)]="twoStepToken"
+            (ngModelChange)="validateValue($event)">
+          <span *ngIf="isInvalid" class="is-dropping">{{ 'USER.CODE_INVALID' | translate }}</span>
+        </label>
+      </div>
+      <div *ngSwitchCase="1" class="result-box">
+        <p *ngIf="disable">{{ 'USER.DISABLE_SUCCESS' | translate }}</p>
+        <p *ngIf="!disable">{{ 'USER.DISABLE_FAILURE' | translate }}</p>
+      </div>
+    </div>
+    <div *ngIf="currentStep===0" class="vertical-center-modal__step-action">
+      <button class="btn-submit" nz-button nzType="primary" [nzLoading]="isLoading" (click)="submit()">
+        <span>{{'COMMON.NEXT' | translate }}</span>
+      </button>
+    </div>
+    <a *ngIf="currentStep===1" routerLink="/settings/overview">
+      <button class="btn-submit" nz-button nzType="primary">{{ 'USER.BACK' | translate }}</button>
+    </a>
+  </div>
+</nz-modal>

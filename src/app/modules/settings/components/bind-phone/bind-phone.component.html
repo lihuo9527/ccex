@@ -1,0 +1,67 @@
+<div class="common-content-container">
+  <div id="main-wrapper">
+    <h2>{{ 'USER.BIND_PHONE' | translate }}</h2>
+    <div id="steps">
+      <nz-steps [nzCurrent]="currentStep">
+        <nz-step nzTitle="{{ 'USER.PHONE' | translate }}"></nz-step>
+        <nz-step nzTitle="{{ 'USER.VERIFY_CODE' | translate }}"></nz-step>
+        <nz-step nzTitle="{{ 'COMMON.RESULT' | translate }}"></nz-step>
+      </nz-steps>
+    </div>
+
+    <div *ngIf="currentStep === 0" id="input-field">
+      <form nz-form [formGroup]="validatePhoneNumForm" (ngSubmit)="submitPhoneNum()">
+        <nz-form-item>
+          <nz-input-group [nzAddOnBefore]="addOnBeforeTemplate">
+            <ng-template #addOnBeforeTemplate>
+              <nz-select style="width: 190px" formControlName="countryCode">
+                <ng-container *ngFor="let countryCode of localize.countryCodes">
+                  <nz-option [nzLabel]="countryCode.displayValue" [nzValue]="countryCode.rawValue"></nz-option>
+                </ng-container>
+              </nz-select>
+            </ng-template>
+            <input type="text" name="phone" nz-input formControlName="phone"
+              placeholder="{{ 'USER.PHONE_PLZ' | translate }}">
+          </nz-input-group>
+          <nz-form-explain *ngIf="validatePhoneNumForm.get('phone').dirty && validatePhoneNumForm.get('phone').errors">
+            {{ 'USER.PHONE_INVALID' | translate }}</nz-form-explain>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control>
+            <button nz-button nzType="primary" [nzLoading]="isLoading">{{ 'COMMON.NEXT' | translate }}</button>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </div>
+    <div *ngIf="currentStep === 1" id="input-field">
+      <form nz-form [formGroup]="validateCodeForm" (ngSubmit)="submitCode()">
+        <nz-form-item>
+          <nz-form-control>
+            <nz-input-group [nzAddOnAfter]="addOnAfterTemplate">
+              <ng-template #addOnAfterTemplate>
+                <ng-container *ngIf="countdown === 0">
+                  <div style="width: 120px; cursor: pointer;" (click)="resendVerifyCode()">
+                    {{ 'COMMON.RESEND' | translate }}</div>
+                </ng-container>
+                <ng-container *ngIf="countdown > 0">
+                  <div style="width: 120px; color: lightgray">{{ 'COMMON.RESEND' | translate }} ({{countdown}}s)</div>
+                </ng-container>
+              </ng-template>
+              <input nz-input type="text" id="code" formControlName="code">
+            </nz-input-group>
+            <nz-form-explain *ngIf="validateCodeForm.get('code').dirty && validateCodeForm.get('code').errors">
+              {{ 'USER.CODE_INVALID' | translate }}</nz-form-explain>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control>
+            <button nz-button nzType="primary" [nzLoading]="isLoading">{{ 'COMMON.NEXT' | translate }}</button>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </div>
+    <div *ngIf="currentStep === 2">
+      <button nz-button nzType="primary" (click)="goBack()">{{ 'COMMON.CONFIRM' | translate }}</button>
+    </div>
+  </div>
+</div>

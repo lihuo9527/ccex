@@ -1,0 +1,133 @@
+<div class="common-content-container">
+  <div class="invite-container">
+    <div style="width:100%;flex: 0 0 100%;">
+      <img src="assets/images/referral/{{localize.currentLanguage.id === 'zh_CN' ? 'zh' : 'en'}}.jpg?t=201904081720" style="width:100%;">
+    </div>
+    <div class="invite-box">
+      <div style="flex:0 0 60%;display: flex;height: 156px;">
+        <div style="flex:0 0 100%;display: flex;flex-flow: wrap;">
+          <div style="flex:0 0 65%;display: flex;flex-flow: wrap;">
+            <p style="flex:0 0 100%;margin: 0;">
+              <span style="color:#888;">{{'INVITE.MY_REFERRAL_ID' | translate }}：</span> <span style="color: #dc204f;font-size: 20px;">{{ referralId }}</span>
+            </p>
+            <p style="flex:0 0 100%;margin: 0;">
+              <span style="color:#888;">{{'INVITE.YOUR_COMMISSION_RATE' | translate }}：</span> <span style="color: #e8b342;font-size: 20px;">{{ CommissionRatio }}%</span>
+            </p>
+          </div>
+          <div style="flex:0 0 25%;display: flex;justify-content:flex-start;" [ngClass]="{'center':!referralId}">
+            <nz-spin *ngIf="!referralId" [nzSize]="'large'"> </nz-spin>
+            <qrcode *ngIf="referralId" [qrdata]="ReferralLink" [size]="110" [level]="'M'"></qrcode>
+          </div>
+          <div style="flex:0 0 100%;display: flex;align-items: center;">
+            <span style="color:#888;">{{'INVITE.REFERRAL_LINK' | translate }}：</span>
+            <input #copyLink type="text" nz-input style="width: 360px;font-size: 12px;" [value]="ReferralLink" readonly>
+            <a class="link-copy" (click)="copyReferralLink()">
+              <i nz-icon type="copy" theme="outline" style="font-size:18px;" class="is-rising"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="invite-total">
+        <div class="total-title">
+          <i nz-icon type="usergroup-add" theme="outline" style="font-size:20px;"></i>
+          <span style="margin-left:10px;">{{'INVITE.ALREADY_REFERRAL_FRIENDS' | translate }}</span>
+        </div>
+        <div class="total-amount">
+          <span style="font-size: 26px;color: #e8b342;">{{ invitations.length }}</span>
+        </div>
+        <div class="total-title" style="border-top:#eee 1px solid;padding-top: 10px;">
+          <i nz-icon type="dollar" theme="outline" style="font-size:20px;"></i>
+          <span style="margin-left:10px;">{{'INVITE.ESTIMATED_COMMISSION' | translate }}</span>
+        </div>
+        <div class="total-amount">
+          <span style="font-size: 26px; color: #e8b342;">{{ TotalCommissions }} BTC</span>
+        </div>
+        <div class="total-amount">
+          <span style="font-size: 18px; color: darkgray;">≒ {{ CommissionsUsdValue }} USD</span>
+        </div>
+      </div>
+    </div>
+    <div style="flex: 0 0 100%;display: flex;justify-content: center;">
+      <div class="invite-record">
+        <div style="flex:0 0 60%;padding-right:10px;max-width: 60%;">
+          <p style="text-align: center;">{{'INVITE.LATEST_COMMISSION_HISTORY' | translate }}</p>
+          <nz-table #commissionsTable nzBordered nzSize="small" nzPageSize="8" [nzHideOnSinglePage]="true" [nzData]="commissions"
+            nzNoResult="{{'INVITE.NO_COMMISSION' | translate}}">
+            <thead>
+              <tr>
+                <th style="width: 36%;">{{'INVITE.COMMISSION' | translate }}</th>
+                <th style="width: 32%;">{{'COMMON.USER' | translate }}</th>
+                <th style="width: 32%;">{{'COMMON.TIME' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody style="background-color: white">
+              <tr *ngFor="let data of commissionsTable.data">
+                <td style="width:50%; text-align: right">{{data.amount | truncateAsStringToPrecision }} {{data.coin}}</td>
+                <td style="width:50%;">{{data.user}}</td>
+                <td style="width:50%;text-align: center;">{{data.Datetime}}</td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </div>
+        <div style="flex:0 0 40%;padding-left:10px;max-width: 40%;">
+          <p style="text-align: center;">{{'INVITE.REFERRAL_FRIENDS' | translate }}</p>
+          <nz-table #invitationsTable nzBordered nzSize="small" nzPageSize="8" [nzHideOnSinglePage]="true" [nzData]="invitations"
+            nzNoResult="{{'INVITE.NO_REFERRAL_FRIENDS' | translate}}">
+            <thead>
+              <tr>
+                <th style="width: 50%;">{{'COMMON.USER' | translate }}</th>
+                <th style="width: 50%;">{{'COMMON.TIME' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody style="background-color: white">
+              <tr *ngFor="let data of invitationsTable.data">
+                <td style="width:50%;">{{data.name}}</td>
+                <td style="width:50%;text-align: center;">{{data.Datetime}}</td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </div>
+      </div>
+    </div>
+    <div class="rule-box" *ngIf="localize.currentLanguage.id === 'zh_CN'">
+      <h3>
+        <p style="flex:0 0 40%;height: 3px;background: #888;"></p>
+        <p style="flex:0 0 20%;">活动规则</p>
+        <p style="flex:0 0 40%;height: 3px;background: #888;"></p>
+      </h3>
+      <span>• 邀请者获得被其邀请者的交易手续费返利，被邀请者获得邀请者返利金的返利。</span>
+      <span>• 对于邀请者，所获得的返利与持有的<a style="color:crimson;" href="https://www.glenbit.com/trade/GLB-USDT">GLB</a>数量有关：</span>
+      <span>&nbsp;&nbsp;持有GLB < 1000，返利40%；</span>
+      <span>&nbsp;&nbsp;持有1000 <= GLB < 10000（VIP1），返利60%； </span>
+      <span>&nbsp;&nbsp;持有10000 <= GLB < 100000（VIP2），返利80%；</span>
+      <span>&nbsp;&nbsp;持有GLB >= 100000（VIP3），返利90%。</span>
+      <span>• 对于被邀请者，统一返利其邀请者返利金的10%。</span>
+      <span>• 被邀请的用户成功完成交易，返利金将会定期划转到邀请双方的格林账户。</span>
+      <span>• 被邀请的用户必须使用邀请者的推荐链接、二维码或者推荐ID注册。</span>
+      <span>• 格林会严查重复的或者虚假账户，一经发现，严肃处理。</span>
+      <span style="color:#ee4920;margin-top:15px; ">注意：</span>
+      <span style="color:#ee4920;">用于市场环境的改变、欺诈风险的存在等原因，格林保留随时对邀请返利规则作出调整的最终解释权。</span>
+    </div>
+    <div class="rule-box" *ngIf="localize.currentLanguage.id === 'en_US'">
+      <h3>
+        <p style="flex:0 0 40%;height: 3px;background: #888;"></p>
+        <p style="flex:0 0 20%;">Rule</p>
+        <p style="flex:0 0 40%;height: 3px;background: #888;"></p>
+      </h3>
+      <span>• An inviter receives part of his invitees' transaction fee as commissions while an invitee receives commissions based on his inviter's commissions.</span>
+      <span>• For inviters, the commissions are related to the <a style="color:crimson;" href="https://www.glenbit.com/trade/GLB-USDT">GLB</a> held by them： </span>
+      <span>&nbsp;&nbsp;Inviters holding GLB < 1000 will receive 40% commission；</span>
+      <span>&nbsp;&nbsp;holding 1000 <= GLB < 10000 (VIP1) will receive 60% commission； </span>
+      <span>&nbsp;&nbsp;holding 10000 <= GLB < 100000 (VIP2) will receive 80% commission；</span>
+      <span>&nbsp;&nbsp;holding GLB >= 100000 (VIP3) will receive 90% commission. </span>
+      <span>• For invitees, the commission is fixed to 10% of the commissions their inviters received.</span>
+      <span>• Once the invitee successfully completes the transaction, the commission will be transferred to the GlenBit
+        account of both parties regularly.</span>
+      <span>• Invitees must use a valid inviter's referral link, QR code or referral ID to register.</span>
+      <span>• GlenBit will deal with duplicate or fake accounts seriously.</span>
+      <span style="color:#ee4920;margin-top:15px; ">Attention:</span>
+      <span style="color:#ee4920;">For reasons such as changes in the market environment, the existence of fraud risks,
+        etc., GlenBit reserves all rights to make final adjustments to the "referral commissions" rules at any time.</span>
+    </div>
+  </div>
+</div>

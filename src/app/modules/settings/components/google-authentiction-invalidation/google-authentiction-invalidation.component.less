@@ -1,0 +1,60 @@
+::ng-deep .vertical-center-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+::ng-deep .vertical-center-modal .ant-modal {
+    .ant-modal-body {
+        padding-left: 100px;
+        padding-right: 100px;
+    }
+    top: 0;
+}
+
+.vertical-center-modal {
+    &__step-content-wrapper {
+        width: 630px;
+        min-height: 400px;
+        margin: 10px auto;
+    }
+    &__step-content {
+        display: flex;
+        justify-content: center;
+        min-height: 250px;
+        font-size: 20px;
+        padding-top: 100px;
+        &--small {
+            font-size: 12px;
+        }
+    }
+}
+
+.check-box {
+    display: flex;
+    flex-wrap: wrap;
+    width: 80%;
+    margin: 0 auto;
+    font-size: 15px;
+}
+
+.input-invalid {
+    border: 1px solid #F04A5D;
+}
+
+.input-invalid:focus {
+    box-shadow: 0 0 0 1px rgba(228, 80, 113, 0.33);
+}
+
+.btn-submit {
+    display: block;
+    margin: 0 auto;
+    width: 160px;
+    height: 50px;
+}
+
+.result-box {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}

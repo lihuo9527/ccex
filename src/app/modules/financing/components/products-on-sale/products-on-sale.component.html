@@ -1,0 +1,119 @@
+<div class="container">
+  <div class="products-on-sale-box">
+    <div class="balance-container">
+      <div class="balance-box">
+        <h2 style="margin-top:50px;"><i nz-icon type="dollar" theme="outline"></i>
+          {{ 'FINANCING.TOTAL_BALANCE' | translate }}：{{ BalanceTotal }}
+          {{BASE_COIN}}</h2>
+        <h2 style="margin-top:20px;"><i nz-icon type="dollar" theme="outline"></i>
+          {{ 'FINANCING.AVAILABLE_BALANCE' | translate }}：{{ BalanceFree }}
+          {{BASE_COIN}}</h2>
+        <div class="transfer-box" *ngIf="apiClient.currentUser">
+          <nz-table #transferObjectTable nzSize="middle" [nzPageSize]="8" style="flex:0 0 100%;"
+            [nzHideOnSinglePage]="true" [nzData]="transferObject" [nzLoading]="isTransferObjectTableLoading">
+            <thead>
+              <tr>
+                <th width="25%">{{ 'WALLET.COIN' | translate }}</th>
+                <th width="25%">{{ 'COMMON.AMOUNT' | translate }}</th>
+                <th width="50%">{{ 'COMMON.OPERATION' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody style="background-color: white">
+              <ng-container *ngFor="let data of transferObjectTable.data">
+                <tr>
+                  <td width="25%">{{data.coin}}</td>
+                  <td width="25%">{{data.maxTransferOut | truncateToPrecision }}</td>
+                  <td width="50%">
+                    <button nz-button
+                      (click)="tryTransfer(data.coin,data.maxTransferIn,data.maxTransferOut)">{{ 'FINANCING.TRANSFER' | translate }}</button>
+                    <button nz-button style="margin-left: 10px;"
+                      (click)="fetchTransferRecords(data.coin)">{{ 'FINANCING.TRANSFER_RECORD' | translate }}</button>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </nz-table>
+        </div>
+      </div>
+      <div class="chart-box">
+        <div *ngIf="isChartLoading" class="chart-loading"></div>
+        <div style="width: 100%;" echarts [options]="yesterdayChartOption" class="chart"></div>
+      </div>
+
+    </div>
+    <div class="product-table">
+      <nz-collapse nzAccordion>
+        <nz-collapse-panel *ngFor="let product of products" [nzHeader]="product.coin" [nzActive]="product.active">
+            <nz-table #productsTable nzSize="middle" [nzHideOnSinglePage]="true" [nzData]="product.data"
+            [nzLoading]="isProductsTableLoading">
+            <thead>
+              <tr>
+                <th style="padding-left: 10px;width: 120px">{{ 'FINANCING.PRODUCT' | translate }}</th>
+                <th style="width: 100px">{{ 'WALLET.COIN' | translate }}</th>
+                <th style="width: 120px;">{{ 'FINANCING.SUBSCRIPTION_DEADLINE' | translate }}</th>
+                <th style="width: 20%;">{{ 'FINANCING.MINIMUM_SUBSCRIPTION' | translate }}</th>
+                <th style="width: 12%;">{{ 'FINANCING.TERM' | translate }}</th>
+                <th style="width: 140px">{{ 'FINANCING.ANNUAL_INTEREST_RATE' | translate }}</th>
+                <th style="width: 10%;"></th>
+              </tr>
+            </thead>
+            <tbody style="background-color: white">
+              <ng-container *ngFor="let data of productsTable.data">
+                <tr>
+                  <td style="padding-left: 10px" *ngIf="localize.currentLanguage.id === 'en_US'">
+                    {{ data.name }}({{ data.id }})</td>
+                  <td style="padding-left: 10px" *ngIf="localize.currentLanguage.id === 'zh_CN'">
+                    {{ data.name_zh }}({{ data.id }})</td>
+                  <td>{{ data.coin }}</td>
+                  <td>{{ data.endsAt | date:"yyyy/MM/dd" }}</td>
+                  <td>{{ data.minPurchaseAmount }}</td>
+                  <td>{{ data.term }}</td>
+                  <td>{{ data.displayAnnualInterestRate }}</td>
+                  <td>
+                    <a (click)="enterProductDetailsPage(data.id,data.coin)">
+                      {{ 'FINANCING.DETAILS' | translate }}
+                    </a>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </nz-table>
+        </nz-collapse-panel>
+      </nz-collapse>
+    </div>
+
+
+    <!-- Transfer Window -->
+    <ccex-transfer *ngIf="isTransferPopupVisible" [isTransferPopupVisible]="isTransferPopupVisible"
+      [transferCoin]="transferCoin" (onCancel)="transferWindowOnCancel($event)" [walletBalance]="walletBalance"
+      [financingBalance]="financingBalance">
+    </ccex-transfer>
+
+    <!-- Transfer Record Window-->
+    <nz-modal [(nzVisible)]="isTransferRecordPopupVisible"
+      nzTitle="{{transferCoin}} {{ 'FINANCING.TRANSFER_RECORD' | translate }}" [nzFooter]="null" [nzWidth]="700"
+      nzClosable="true" nzMaskClosable="true" (nzOnCancel)="isTransferRecordPopupVisible=false">
+      <nz-table #transferRecordsTable nzSize="middle" [nzPageSize]="10" [nzHideOnSinglePage]="true"
+        [nzData]="transferRecords">
+        <thead>
+          <tr>
+            <th width="33.33%">{{ 'FINANCING.TRANSFER_DATE' | translate }}</th>
+            <th width="33.33%">{{ 'COMMON.AMOUNT' | translate }}</th>
+            <th width="33.33%">{{ 'FINANCING.TRANSFER_IN' | translate }} / {{ 'FINANCING.TRANSFER_OUT' | translate }}
+            </th>
+          </tr>
+        </thead>
+        <tbody style="background-color: white">
+          <ng-container *ngFor="let data of transferRecordsTable.data">
+            <tr>
+              <td width="33.33%">{{ data.createdAt | date:"yyyy/MM/dd HH:mm:ss" }}</td>
+              <td width="33.33%">{{ data.amount | truncateToPrecision }}</td>
+              <td width="33.33%" *ngIf="data.direction === 0">{{ 'FINANCING.TRANSFER_OUT' | translate }}</td>
+              <td width="33.33%" *ngIf="data.direction === 1">{{ 'FINANCING.TRANSFER_IN'  | translate }}</td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </nz-table>
+    </nz-modal>
+  </div>
+</div>

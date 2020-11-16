@@ -1,0 +1,106 @@
+<div class="common-content-container">
+  <div class="events-container">
+    <div style="width:100%;flex: 0 0 100%;">
+      <img src="assets/images/events/holdglbgiftxrp_{{localize.currentLanguage.id === 'zh_CN' ? 'zh' : 'en'}}.png?t=201907242005" style="width:100%;">
+    </div>
+    <div class="events-box">
+      <div class="bonus-box has-shadow">
+        <div>
+          <span style="padding-right: 30px;">{{'EVENT_CENTER.MY_TOTAL_HOLDINGS' | translate}}： {{TotalHoldings}} {{baseCoin}} </span>
+          <a (click)="onDetailClick(1)">{{'EVENT_CENTER.PARTICIPATED_EVENTS' | translate}}</a>
+        </div>
+        <div>
+          <span style="padding-right: 30px;">{{'EVENT_CENTER.YESTERDAY_EVENT_BONUS' | translate}}： {{YesterdayEventAirDrops}} {{baseCoin}} </span>
+          <a (click)="onDetailClick(2)">{{'EVENT_CENTER.DETAILS' | translate}}</a>
+        </div>
+        <div>
+          <span style="padding-right: 30px;">{{'EVENT_CENTER.YESTERDAY_COMMISSIONS' | translate}}： {{YesterdayCommissionAirDrops}} {{baseCoin}} </span>
+          <a (click)="onDetailClick(3)">{{'EVENT_CENTER.DETAILS' | translate}}</a>
+        </div>
+      </div>
+      <div class="events-table">
+        <h3 style="font-weight: bold;margin: 10px 0;width: 100%;">{{'EVENT_CENTER.ONGOING_EVENT' | translate}}</h3>
+        <nz-table #eventsTable nzSize="middle" [nzPageSize]="8" [nzHideOnSinglePage]="true"
+        [nzData]="events" [nzLoading]="isEventsLoading">
+          <thead>
+            <th>{{'COMMON.NAME' | translate}}</th>
+            <th>{{ 'FINANCING.TERM' | translate }}</th>
+            <th>{{'EVENT_CENTER.PARTICIPATION_CONDITION' | translate}}</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let event of eventsTable.data">
+              <td *ngIf="localize.currentLanguage.id === 'en_US'">{{event.name}}</td>
+              <td *ngIf="localize.currentLanguage.id === 'zh_CN'">{{event.name_zh}}</td>
+              <td>{{event.lengthInDay}}</td>
+              <td><a [routerLink]="['/events/events_detail',{'eventId':event.id,'catalogId':event.catalog}]">{{'EVENT_CENTER.INSTANT_VIEW' | translate}}</a></td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- air drop bonus-->
+<nz-modal [(nzVisible)]="isAirDropCommissionPopupVisible" nzTitle="{{'EVENT_CENTER.EVENT_AIR_DROPS'| translate}}"
+  [nzFooter]="null" [nzWidth]="700" nzClosable="true" nzMaskClosable="true" (nzOnCancel)="isAirDropCommissionPopupVisible=false">
+  <nz-table #airDropsTable nzSize="middle" [nzPageSize]="10" [nzHideOnSinglePage]="true"
+    [nzData]="airDrops"  [(nzPageIndex)]="airDropsPageIndex" [nzTotal]="airDropsTotal"
+    [nzFrontPagination]="false" nzPageSize="30" (nzPageIndexChange)="fetchEventAirDrops($event)">
+    <thead>
+      <tr>
+        <th style="width: 40%;">{{'EVENT_CENTER.FROM' | translate}}</th>
+        <th style="width: 20%;">{{'COMMON.AMOUNT' | translate }}</th>
+        <th style="width: 15%;">{{ 'WALLET.COIN' | translate }}</th>
+        <th style="width: 20%;">{{'COMMON.TIME' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody style="background-color: white">
+      <tr *ngFor="let data of airDropsTable.data">
+        <td>
+          <ng-container *ngIf="data.reason.fromEvent">
+            <p style="margin: 0;width: 100%;">{{data.reason.fromEvent.name}}</p>
+            <p style="margin: 0;width: 100%;">({{data.reason.fromEvent.id}})</p>
+          </ng-container>
+          <ng-container *ngIf="data.reason.fromLotto">
+            <p style="margin: 0;width: 100%;">{{data.reason.fromLotto.name}}</p>
+            <p style="margin: 0;width: 100%;">({{data.reason.fromLotto.id}})</p>
+          </ng-container>
+        </td>
+        <td>{{data.amount}}</td>
+        <td>{{data.coin}}</td>
+        <td>{{data.createdAt | date:"yyyy/MM/dd"}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-modal>
+
+<!-- my participation -->
+<nz-modal [(nzVisible)]="isMyParticipationPopupVisible" nzTitle="{{'EVENT_CENTER.PARTICIPATED_EVENTS' | translate}}" [nzFooter]="null" [nzWidth]="900"
+  nzClosable="true" nzMaskClosable="true" (nzOnCancel)="isMyParticipationPopupVisible=false">
+  <nz-table #participationsTable nzSize="middle" [nzPageSize]="10" [nzHideOnSinglePage]="true"
+    [nzData]="participations">
+    <thead>
+      <tr>
+        <th style="width: 33%;">ID</th>
+        <th>{{'EVENT_CENTER.EVENT_NAME' | translate}}</th>
+        <th>{{'COMMON.AMOUNT' | translate }}</th>
+        <th>{{ 'WALLET.COIN' | translate }}</th>
+        <th style="text-align: right;">{{'EVENT_CENTER.PARTICIPATION_TIME' | translate}}</th>
+      </tr>
+    </thead>
+    <tbody style="background-color: white">
+      <tr *ngFor="let data of participationsTable.data">
+        <td>
+          <p style="margin: 0;width: 100%;">{{data.currentParticipation}}</p>
+          <p style="margin: 0;width: 100%;">({{data.id}})</p>
+        </td>
+        <td>{{data.eventName}}</td>
+        <td>{{data.amount}}</td>
+        <td>{{data.eventCoin}}</td>
+        <td style="text-align: right;">{{data.createdAt | date:"yyyy/MM/dd HH:mm:ss"}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-modal>

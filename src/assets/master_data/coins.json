@@ -1,0 +1,44 @@
+[
+    {
+        "id": "GLB",
+        "first": "15",
+        "last": "30",
+        "minDeposit": "500 GLB"
+    },
+    {
+        "id": "USDT",
+        "first": "1",
+        "last": "6",
+        "minDeposit": "1.0 USDT"
+    },
+    {
+        "id": "BTC",
+        "first": "1",
+        "last": "6",
+        "minDeposit": "0.001 BTC"
+    },
+    {
+        "id": "ETH",
+        "first": "15",
+        "last": "30",
+        "minDeposit": "0.05 ETH"
+    },
+    {
+        "id": "LTC",
+        "first": "3",
+        "last": "6",
+        "minDeposit": "0.001 LTC"
+    },
+    {
+        "id": "XRP",
+        "first": "1",
+        "last": "1",
+        "minDeposit": "0.1 XRP"
+    },
+    {
+        "id": "EOS",
+        "first": "1",
+        "last": "1",
+        "minDeposit": "0.1 EOS"
+    }
+]

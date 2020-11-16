@@ -1,0 +1,463 @@
+<header>
+  <div style="display: flex;flex-direction: row;">
+    <div id="logo">
+      <a routerLink="/"><img src="assets/images/glenbit-logo.png"></a>
+    </div>
+    <div id="pair-selector" class="right-border">
+    <div class="coin-info-box">
+      <div style="position: relative;margin-left: 10px;display: flex;z-index: 2;" (mouseleave)="isInfoBoxShow = false">
+        <i class="info-icon" nz-icon type="info-circle" theme="outline" (mouseenter)="isInfoBoxShow = true"></i>
+        <div class="info-box" *ngIf="isInfoBoxShow">
+          <i class="info-arrow"></i>
+          <div class="info-text">
+            <ng-container *ngIf="balance.target.symbol==='BTC'">
+                <b>Bitcoin（BTC）</b>
+                <small *ngIf="localize.currentLanguage.id === 'zh_CN'">Bitcoin 比特币的概念最初由中本聪在2009年提出，是点对点的基于 SHA-256 算法的一种P2P形式的数字货币，点对点的传输意味着一个去中心化的支付系统。</small>
+                <small *ngIf="localize.currentLanguage.id === 'en_US'">Bitcoin is a digital asset and a payment system invented by Satoshi Nakamoto who published a related paper in 2008 and released it as open-source software in 2009. The system featured as peer-to-peer; users can transact directly without an intermediary.</small>
+            </ng-container>
+            <ng-container *ngIf="balance.target.symbol==='LTC'">
+                <b>Litecoin（LTC）</b>
+                <small *ngIf="localize.currentLanguage.id === 'zh_CN'">莱特币从比特币衍生出来，最早通过采用占用内存更多的 Scrypt 算法以及将出块时间从10分钟改成了2.5分钟而大获成功。</small>
+                <small *ngIf="localize.currentLanguage.id === 'en_US'">The Litecoin is derived from bitcoins, which is the earliest token by taking up more  memory of the Scrypt algorithm and changing the block time from 10 minutes to 2.5 minutes successfully.</small>
+            </ng-container>
+            <ng-container *ngIf="balance.target.symbol==='XRP'">
+                <b>Ripple（XRP）</b>
+                <small *ngIf="localize.currentLanguage.id === 'zh_CN'">瑞波币是ripple系统中唯一的通用货币，其不同于ripple系统中的其他货币，其他货币比如CNY、USD不能跨网关提现的，换句话说，A网关发行的CNY只能在A网关提现，若想在B网关提现，必须通过ripple系统的挂单功能转化为B网关的CNY才可以到B网关提现。而瑞波币完全没有这方面的限制，它在ripple系统内是通用的。</small>
+                <small *ngIf="localize.currentLanguage.id === 'en_US'">Built for enterprise use, XRP offers banks and payment providers a reliable, on-demand option to source liquidity for cross-border payments.</small>
+            </ng-container>
+            <ng-container *ngIf="balance.target.symbol==='ETH'">
+                <b>Ethereum（ETH）</b>
+                <small *ngIf="localize.currentLanguage.id === 'zh_CN'">以太坊（Ethereum）是有图灵完备的智能合约功能的公有区块链，Vitaik Buterin是其创始人。</small>
+                <small *ngIf="localize.currentLanguage.id === 'en_US'">Ethereum is a decentralized platform that runs smart contracts: applications that run exactly as programmed without any possibility of downtime, censorship, fraud or third party interference.</small>
+            </ng-container>
+            <ng-container *ngIf="balance.target.symbol==='EOS'">
+                <b>EOS（EOS）</b>
+                <small *ngIf="localize.currentLanguage.id === 'zh_CN'">EOS（Enterprise Operation System）是由 Block.one 公司主导开发的一种全新的基于区块链智能合约平台，旨在为高性能分布式应用提供底层区块链平台服务。</small>
+                <small *ngIf="localize.currentLanguage.id === 'en_US'">The EOS.IO software introduces a new blockchain architecture designed to enable vertical and horizontal scaling of decentralized applications. This is achieved by creating an operating system-like construct upon which applications can be built.</small>
+            </ng-container>
+            <ng-container *ngIf="balance.target.symbol==='GLB'">
+                <b>GLB（GLB）</b>
+                <small *ngIf="localize.currentLanguage.id === 'zh_CN'">格林币简称GLB，是由GlenBit官方发行的唯一平台代币。GLB将支持格林平台多项业务及多款产品。未来，GLB也将会是格林生态圈的“燃料”，使用格林产品时，需要使用GLB。包括抵扣手续费、会员费、打赏等多元化功能。 </small>
+                <small *ngIf="localize.currentLanguage.id === 'en_US'">The GlenBit token is referred to as GLB and is the only platform token officially issued by GlenBit. GLB will support multiple businesses and multiple products on the GlenBit Platform. In the future, GLB will also be the “fuel” of the GlenBit Ecosphere. When using GlenBit products, GLB is required. Including deductible fees, membership fees, rewards and other diversified functions.</small>
+            </ng-container>
+            <a *ngIf="localize.currentLanguage.id === 'zh_CN'" target='_blank' [href]="CoinInfoUrl">查看详情</a>
+            <a *ngIf="localize.currentLanguage.id === 'en_US'" target='_blank' [href]="CoinInfoUrl + '?lang=en'">view details</a>
+          </div>
+        </div>
+      </div>
+     </div>
+     <div id="active-pairs-container">
+       <a class="active-pairs" (click)="isMenuVisible=!isMenuVisible"> {{symbolToDisplay}}
+         <i style="padding-left:5px;"></i>
+         <i nz-icon type="caret-down" [ngClass]="{'caret-down':isMenuVisible,'caret-up':!isMenuVisible}" theme="outline"></i>
+       </a>
+     </div>
+     <div class="pairs-menu-box" *ngIf="isMenuVisible">
+        <div class="menu-header">
+          <div class="header-left">
+            <a (click)="onTab(5)" [ngClass]="{'active-tab':currentTabId===5}" style="width: 86px;"><i nz-icon type="star" theme="fill" style="padding-right:5px;"></i>{{ 'TRADE.FAVORITES' | translate }}</a>
+            <a (click)="onTab(1)" [ngClass]="{'active-tab':currentTabId===1}">USDT</a>
+            <a (click)="onTab(2)" [ngClass]="{'active-tab':currentTabId===2}">BTC</a>
+            <a (click)="onTab(3)" [ngClass]="{'active-tab':currentTabId===3}">ETH</a>
+            <a (click)="onTab(4)" [ngClass]="{'active-tab':currentTabId===4}">GLB</a>
+            <a (click)="onTab(0)" [ngClass]="{'active-tab':currentTabId===0}">{{ 'COMMON.ALL' | translate }}</a>
+          </div>
+          <div class="header-right">
+            <nz-input-group id="coin-search" nzPrefixIcon="anticon anticon-search">
+                 <input id="searchbox" type="text" placeholder="ETH, XRP..." [value]="keyword" (keyup)="filter($event)">
+            </nz-input-group>
+          </div>
+        </div>
+        <div class="menu-table">
+         <nz-table #tickersTable nzSize="middle" [nzPageSize]="tickers.length" [nzHideOnSinglePage]="true" [nzData]="tickers" [nzLoading]="isLoading">
+             <thead (nzSortChange)="sortTickers($event)" nzSingleSort>
+               <tr style="background-color:#000;">
+                 <th width="8%"></th>
+                 <th width="20%">{{ 'TRADE.PAIR' | translate }}</th>
+                 <th width="20%">{{ 'TRADE.LATEST_PRICE' | translate }}</th>
+                 <th nzShowSort nzSortKey="change" style="width: 20%;text-align: right;">{{ 'TRADE.24H_CHANGE' | translate }}</th>
+                 <th nzShowSort nzSortKey="volume" style="width: 30%;text-align: right;">{{ 'TRADE.24H_VOLUME' | translate }}</th>
+               </tr>
+             </thead>
+             <tbody>
+               <ng-container *ngFor="let data of tickersTable.data">
+                 <tr *ngIf="data.isVisible" (click)="onChangePair(data.pairStr)">
+                   <td width="8%" style="flex:0 0 8%;justify-content: center;" (click)="onFavorite(data.pairStr,$event)">
+                     <a id="favorites">
+                       <i nz-icon type="star" theme="fill" [ngClass]="{'favorite':data.isFavorite}"></i>
+                     </a>
+                   </td>
+                   <td width="20%" style="flex:0 0 20%;"><span>{{data.name}}</span></td>
+                   <td style="position: relative;padding-left:0;width: 20%;flex:0 0 20%;">
+                       <div class="arrow-box" [ngClass]="{'is-rising':data.type === 'high','is-dropping':data.type === 'low'}">
+                         <i *ngIf="data.type === 'high'" class="is-rising" nz-icon type="arrow-up" theme="outline"></i>
+                         <i  *ngIf="data.type === 'low'" class="is-dropping" nz-icon type="arrow-down" theme="outline"></i>
+                       </div>
+                       <span class="latest-price" [ngClass]="{'is-rising':data.type === 'high','is-dropping':data.type === 'low'}">{{data.priceStr}} </span>
+                   </td>
+                   <td width="22%"  style="flex:0 0 22%;padding-right:10px;justify-content: flex-end;" [class]="data.change ? (data.change > 0 ? 'is-rising' : 'is-dropping') : ''"><span>{{data.changeStr}}</span></td>
+                   <td style="width: 30%;flex:0 0 30%;padding-right:10px;justify-content: flex-end;" ><span>{{data.volumeStr}}</span></td>
+                 </tr>
+               </ng-container>
+             </tbody>
+         </nz-table>
+         </div>
+      </div>
+   </div>
+    <div id="latest-price" class="right-border panel-padding">
+      <p>{{ 'TRADE.LATEST_PRICE' | translate }}</p>
+      <div style="position:relative;">
+        <div class="arrow-box">
+          <i *ngIf="ticker.type === 'high'" nz-icon type="arrow-up" theme="outline" class="is-rising" style="font-size: 14px;"></i>
+          <i *ngIf="ticker.type === 'low'" nz-icon type="arrow-down" theme="outline" class="is-dropping" style="font-size: 14px;"></i>
+        </div>
+        <h3 [ngClass]="{'is-rising':ticker.type === 'high','is-dropping':ticker.type ==='low'}">{{ticker.priceStr}}</h3>
+      </div>
+    </div>
+    <div id="day-change" class="right-border panel-padding">
+      <p>{{ 'TRADE.24H_CHANGE' | translate }}</p>
+      <h3 [class]="ticker.change ? (ticker.change > 0 ? 'is-rising' : 'is-dropping') : ''">{{ticker.changeStr}}</h3>
+    </div>
+    <div id="day-price-high" class="right-border panel-padding">
+      <p>{{ 'TRADE.24H_HIGH' | translate }}</p>
+      <h3 class="is-rising">{{ticker.highStr}}</h3>
+    </div>
+    <div id="day-price-low" class="right-border panel-padding">
+      <p>{{ 'TRADE.24H_LOW' | translate }}</p>
+      <h3 class="is-dropping">{{ticker.lowStr}}</h3>
+    </div>
+    <div id="day-volume" class="right-border panel-padding">
+      <p>{{ 'TRADE.24H_VOLUME' | translate }}</p>
+      <h3>{{ticker.volumeStr}}</h3>
+    </div>
+  </div>
+  <div *ngIf="!apiClient.currentUser" style="position: relative;right:0px;">
+    <div id="buttons-container">
+      <div id="buttons">
+        <button nz-button [nzType]="'primary'" (click)="login()">{{ 'COMMON.LOGIN' | translate }}</button>
+        <button nz-button [nzType]="'secondary'" (click)="signup()">{{ 'COMMON.SIGNUP' | translate }}</button>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="apiClient.currentUser" style="position: relative;right:50px;top:20px;">
+    <div style="padding-left: 20px;position: relative;padding-bottom: 30px;" (mousemove)="isOverViewTwoLevelMenuOpen=true"  (mouseout)="isOverViewTwoLevelMenuOpen=false">
+        <div class="account">
+          <i nz-icon type="idcard" theme="outline" style="color:#fff;padding-right: 7px;"></i>
+          <a style="color:#fff;padding-right: 20px;text-decoration:none;">{{ 'USER.OVERVIEW' | translate }}</a>
+        </div>
+        <ul [hidden]="!isOverViewTwoLevelMenuOpen" class="two-level-menu">
+            <li style="margin-top:20px;"><a routerLink="/settings/overview">{{ 'USER.ACCOUNT' | translate }}</a></li>
+            <li><a routerLink="/wallet">{{ 'HEADER.WALLET' | translate }}</a></li>
+            <li (click)="logout()"><a>{{ 'COMMON.LOGOUT' | translate }}</a></li>
+        </ul>
+      </div>
+  </div>
+</header>
+
+<div class="data-box" >
+  <div id="left-half">
+    <div id="trading-view" class="common-padding">
+      <ng-container *ngIf="symbol">
+        <app-tv-chart-container
+         [symbol]="symbol"
+        ></app-tv-chart-container>
+      </ng-container>
+    </div>
+    <div id="order-history">
+      <div id="tab-container">
+        <a (click)="onTab(0)" [class]="currentTabId === 0 ? 'tab-button tab-button-active' : 'tab-button tab-button-inactive'">{{ 'COMMON.OPEN_ORDERS' | translate }}</a>
+        <a (click)="onTab(1)" [class]="currentTabId === 1 ? 'tab-button tab-button-active' : 'tab-button tab-button-inactive'">{{ 'COMMON.DEALT_ORDERS' | translate }}</a>
+      </div>
+      <div id="tab-content">
+        <!-- Open Orders -->
+        <ng-container *ngIf="currentTabId === 0">
+          <table class="scrollable-table">
+            <tr>
+              <td>
+                <table>
+                  <tr style="text-align: left">
+                    <th style="padding-left: 10px">{{ 'COMMON.TIME' | translate }}</th>
+                    <th style="text-align: center" width="12%">{{ 'TRADE.BUY_OR_SELL' | translate }}</th>
+                    <th width="15%">{{ 'TRADE.PRICE' | translate }}</th>
+                    <th style="text-align: right" width="15%">{{ 'TRADE.OPEN_AMOUNT' | translate }}</th>
+                    <th style="text-align: right" width="15%">{{ 'TRADE.FILLED' | translate }}</th>
+                    <th style="text-align: center" width="20%">{{ 'COMMON.OPERATION' | translate }}</th>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr style="height: 120px">
+              <div>
+                <table>
+                  <tr *ngFor="let data of openOrders" class="open-orders">
+                    <td style="padding-left: 8px">{{data.datetime}}</td>
+                    <td style="text-align: center" width="12%">{{ data.Type | translate }}</td>
+                    <td width="15%">{{data.price | truncateAsStringToPrecision: precision}}</td>
+                    <td style="text-align: right" width="15%">{{data.amount | truncateAsStringToPrecision: minVolumePrecision}}</td>
+                    <td style="text-align: right" width="15%">{{data.filled | truncateAsStringToPrecision: minVolumePrecision}}</td>
+                    <td style="text-align: center" width="20%">
+                      <a nz-popconfirm
+                      nzPlacement="left"
+                      nzTitle="{{ 'TRADE.CANCEL_ORDER' | translate }}?"
+                      nzOkText="{{ 'COMMON.YES' | translate }}"
+                      nzCancelText="{{ 'COMMON.NO' | translate }}"
+                      (nzOnConfirm)="onCancel(data.orderId, data.type)">{{ 'COMMON.CANCEL' | translate }}</a>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </tr>
+          </table>
+        </ng-container>
+        <!-- Dealt Orders -->
+        <ng-container *ngIf="currentTabId === 1">
+          <table class="scrollable-table">
+            <tr>
+              <td>
+                <table>
+                  <tr>
+                    <th style="padding-left: 10px" width="30%">{{ 'COMMON.TIME' | translate }}</th>
+                    <th style="text-align: center" width="20%">{{ 'TRADE.BUY_OR_SELL' | translate }}</th>
+                    <th width="25%">{{ 'TRADE.PRICE' | translate }}</th>
+                    <th width="25%">{{ 'TRADE.VOLUME' | translate }}</th>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr style="height: 120px">
+              <div style="width:100%;">
+                <ul class="orders-list" *ngFor="let data of dealtOrders">
+                  <li style="padding-left: 8px;flex: 0 0 30%;" width="30%">{{data.datetime}}</li>
+                  <li style="text-align: center;flex: 0 0 20%;" width="20%">{{ data.Type | translate }}</li>
+                  <li style="flex: 0 0 25%;" width="25%">{{data.price | truncateAsStringToPrecision: precision}}</li>
+                  <li style="flex: 0 0 25%;" width="25%">{{data.amount | truncateAsStringToPrecision: minVolumePrecision}}</li>
+                </ul>
+                <a *ngIf="dealtOrders.length>0" class="orders-list" (click)="showDealt()" style="justify-content: center;">
+                  {{'TRADE.SHOW_ALL' | translate}}
+                </a>
+              </div>
+            </tr>
+          </table>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <div id="right-half">
+    <div style="width: 100%;height: calc(100% - 348px);display: flex;">
+      <div id="order-book" class="common-padding">
+        <div id="order-book-header">
+          <!-- <span style="color:#fff;"> {{ 'TRADE.MARKET_ORDERS' | translate }}</span> -->
+          <div style="float: right;">
+            <span style="color:#fff;font-size: 14px;color:#93989D;"> {{ 'TRADE.DEPTH_MERGE' | translate }}:</span>
+            <select class="deep-merge-select" [(ngModel)]="deepMergeValue"  (change)="filterOrders()">
+              <option *ngFor="let option of deepMergeArr;" [value]="option">
+                {{ option }} {{ localize.currentLanguage.id === 'zh_CN' ? "位小数" : "decimals" }}
+              </option>
+            </select>
+          </div>
+          <span class="is-dropping"  style="float:left;">{{ 'TRADE.sell' | translate }}</span>
+          <span style="float:left;padding-left: 4px;padding-right: 4px;"> / </span>
+          <span class="is-rising" style="float:left;">{{ 'TRADE.buy' | translate }}</span>
+        </div>
+        <div id="order-book-title">
+          <span>{{ 'TRADE.PRICE' | translate }}</span>
+          <span style="text-align: right; flex:1 1 28.33%;">{{ 'TRADE.VOLUME' | translate }}</span>
+          <span style="text-align: right; flex:1 1 38.33%;">{{ 'TRADE.TOTAL_PRICE' | translate }}</span>
+        </div>
+        <div style="display: flex;height:calc(100% /2 - 55px);">
+          <div class="order-records-container" style="flex-direction: column-reverse; padding-bottom: 10px">
+            <ng-container *ngFor="let order of sellOrders">
+              <ng-container *ngIf="order.isVisible">
+                <div *ngIf="order.price > 0" class="order-records" (click)="onClickOrderRecord(order.price)" style="padding-left:20px;padding-right:20px;position: relative;">
+                  <div *ngIf="order.amountRatio>0" [ngStyle]="{'width':order.amountRatio  + '%'}" style="position: absolute;right:0;background:rgba(238, 108, 136, 0.1);height: 100%;"></div>
+                  <div class="order-mark" *ngIf='order.mark'></div>
+                  <span class="is-dropping" style="flex:1 1 33.33%;">{{ order.price }}</span>
+                  <span style="text-align: right; flex:1 1 28.33%;">{{ order.amount | truncateAsStringToPrecision: minVolumePrecision }}</span>
+                  <span style="text-align: right; flex:1 1 38.33%;">{{ order.total }}</span>
+                </div>
+                <div *ngIf="order.price == 0" class="order-records" style="padding-left:20px;padding-right:20px;position: relative;">
+                  <span class="is-dropping" style="flex:1 1 33.33%;">--</span>
+                  <span style="text-align: right; flex:1 1 28.33%;">--</span>
+                  <span style="text-align: right; flex:1 1 38.33%;">--</span>
+                </div>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+        <div id="divider">
+          <div style="position: relative;display: flex;align-items: center;">
+            <div class="arrow-box">
+              <i *ngIf="ticker.type === 'high'" nz-icon type="arrow-up" theme="outline" class="is-rising" style="font-size: 14px;"></i>
+              <i *ngIf="ticker.type === 'low'" nz-icon type="arrow-down" theme="outline" class="is-dropping" style="font-size: 14px;"></i>
+            </div>
+            <span [ngClass]="{'is-rising':ticker.type === 'high','is-dropping':ticker.type === 'low'}">{{ticker.priceStr}}</span>
+            <span [class]="ticker.change ? (ticker.change > 0 ? 'is-rising' : 'is-dropping') : ''">{{ticker.changeStr}}</span>
+          </div>
+        </div>
+        <div style="display: flex;height:calc(100% /2 - 55px);">
+          <div class="order-records-container" style="flex-direction: column;padding-bottom: 10px">
+            <ng-container *ngFor="let order of buyOrders">
+              <ng-container *ngIf="order.isVisible">
+                <div *ngIf="order.price > 0" class="order-records" (click)="onClickOrderRecord(order.price)" style="padding-left:20px;padding-right:20px;position: relative;">
+                  <div *ngIf="order.amountRatio>0" [ngStyle]="{'width':order.amountRatio  + '%'}" style="position: absolute;right:0;background:rgba(99, 155, 192, 0.1);height: 100%;"></div>
+                  <div class="order-mark" *ngIf='order.mark'></div>
+                  <span class="is-rising" style="flex:1 1 33.33%;">{{ order.price }}</span>
+                  <span style="text-align: right; flex:1 1 28.33%;">{{ order.amount | truncateAsStringToPrecision: minVolumePrecision }}</span>
+                  <span style="text-align: right; flex:1 1 38.33%;">{{ order.total }}</span>
+                </div>
+                <div *ngIf="order.price === 0" class="order-records" style="padding-left:20px;padding-right:20px;position: relative;">
+                  <span class="is-rising" style="flex:1 1 33.33%;">--</span>
+                  <span style="text-align: right; flex:1 1 28.33%;">--</span>
+                  <span style="text-align: right; flex:1 1 38.33%;">--</span>
+                </div>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <div id="dealt-history" class="common-padding">
+        <table class="scrollable-table">
+          <tr style="background:#353B41;width: 100%;height: 44px;">
+            <th style="text-align: left; padding-left: 8px;color:#fff;font-size: 16px;font-weight:normal;">{{ 'TRADE.MARKET_TRADES' | translate }}</th>
+          </tr>
+          <tr>
+            <td>
+              <table>
+                <tr >
+                  <th style="text-align: left; padding-left: 8px" width="33.33%;">{{ 'TRADE.PRICE' | translate }}</th>
+                  <th style="text-align: right;padding-right:8px;" width="33.33%;">{{ 'TRADE.VOLUME' | translate }}</th>
+                  <th style="text-align: right;padding-right:14px;" width="33.33%;">{{ 'COMMON.TIME' | translate }}</th>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <div>
+              <table>
+                <tr class="trade-history"  *ngFor="let data of tradeHistories" (click)="onClickOrderRecord(data.price)">
+                  <td [class]="data.type === 'buyer' ? 'is-rising' : 'is-dropping'" style="text-align: left;padding-left: 8px;width: 33.33%;">{{ data.price | truncateAsStringToPrecision: precision }}</td>
+                  <td style="text-align: right; padding-right: 8px;width: 33.33%;">{{ data.amount | truncateAsStringToPrecision: minVolumePrecision }}</td>
+                  <td style="text-align: right; padding-right: 8px;width: 33.33%;">{{ data.time }}</td>
+                </tr>
+              </table>
+            </div>
+          </tr>
+        </table>
+      </div>
+    </div>
+    
+
+    <div id="trade-forms" class="common-padding">
+      <div *ngIf="!apiClient.currentUser" class="trade-shadow">
+        <div style="color:#eee;">
+          <a style="color:#0ca5f1;" (click)="login()">{{ 'COMMON.LOGIN' | translate }}</a>
+          <span *ngIf="localize.currentLanguage.id === 'zh_CN'"> 或 </span>
+          <span *ngIf="localize.currentLanguage.id === 'en_US'"> or </span>
+          <a style="color:#0ca5f1;" (click)="signup()">{{ 'COMMON.SIGNUP' | translate }}</a>
+          <span *ngIf="localize.currentLanguage.id === 'zh_CN'"> 后进行交易</span>
+          <span *ngIf="localize.currentLanguage.id === 'en_US'"> to trade</span>
+        </div>
+      </div>
+      <div class="form-container" oncontextmenu="return false">
+        <div class="form-header" style="border-right: 0.1px solid #5B5F62">{{ 'TRADE.BUY' | translate }}<span style="color:#93989D; float: right; font-size: 12px; margin-top: 6px">{{ 'WALLET.AVAILABLE' | translate }}: <span style="color:#F0D22E">{{balance.market.free | truncateAsStringToPrecision: 4 }}</span> {{balance.market.symbol}}</span></div>
+        <form nz-form [formGroup]="buyForm" (ngSubmit)="tryBuy()" class="form-body" style="border-right: 0.1px solid #5B5F62" >
+          <nz-form-item>
+            <nz-form-control>
+              <nz-input-group style="position: relative;">
+                <input class="input-field" type="text" nz-input name="buyPrice" formControlName="buyPrice" placeholder="{{ 'TRADE.BUY_PRICE' | translate }}" (keyup)="forcePricePrecision('buy')">
+                <i nz-icon type="sync" theme="outline" style="position: absolute;right:8px;font-size: 16px;top: 8px;z-index: 2;color: #93989D;cursor: pointer;" (click)="setOptimalPrice('buy')"></i>
+                <!-- <nz-form-extra class="input-extra">最佳买价: <span>N/A</span></nz-form-extra> -->
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-input-group>
+                <input class="input-field" type="text" nz-input name="buyAmount" formControlName="buyAmount" placeholder="{{ 'TRADE.BUY_VOLUME' | translate }}" (keyup)="forceAmountPrecision('buy')">
+                <nz-form-extra class="input-extra">{{ 'TRADE.MAX' | translate }}: <span>{{MaxBuyAmount | truncateAsStringToPrecision: minVolumePrecision}}</span> {{balance.target.symbol}}</nz-form-extra>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item style="margin-bottom: 0px">
+            <nz-form-control>
+              <nz-input-group>
+                <nz-row>
+                  <nz-col nzSpan="5">
+                    <p style="height: 36px; margin: 0 4px; padding-top: 8px; color: #FFFFFF">{{ 'TRADE.RATIO' | translate }}: </p>
+                  </nz-col>
+                  <nz-col nzSpan="19">
+                    <nz-slider [nzTipFormatter]="ratioformatter" [nzDisabled]="MaxBuyAmount <= 0" [nzMax]="1" [nzStep]="0.25" (nzOnAfterChange)="onBuyRatioChanged($event)"></nz-slider>
+                  </nz-col>
+                </nz-row>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <div>
+            <p style="color: white; font-size: 14px; margin: 0 4px">{{ 'TRADE.AMOUNT' | translate }}: {{BuyVolume | truncateAsStringToPrecision }} ({{balance.market.symbol}})</p>
+            <p style="color: #93989D; font-size: 12px; margin: 2px 4px 10px 4px">{{ 'TRADE.FEE' | translate }} {{fee * 100}}%</p>
+          </div>
+          <nz-form-item>
+            <nz-form-control>
+              <div *ngIf="isMinBuyAmountTipVisible" class="tip-box">
+                 <p class="tip-text">{{ 'TRADE.MIN'| translate }} {{ 'TRADE.BUY_VOLUME' | translate }}: {{minVolume}} {{balance.target.symbol}} </p>
+                 <i class="tip-arrow"></i>
+              </div>
+              <button nz-button style="width: 100%; height: 36px;" [nzType]="'primary'" nzPlacement="top" [nzLoading]="isMinBuyAmountTipVisible || isFetchingBalance">{{ 'TRADE.BUY' | translate }}</button>
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </div>
+      <div class="form-container"  oncontextmenu="return false">
+        <div class="form-header" style="border-left: 0.1px solid #5B5F62">{{ 'TRADE.SELL' | translate }}<span style="color:#93989D; float: right; font-size: 12px; margin-top: 6px">{{ 'WALLET.AVAILABLE' | translate }}: <span style="color:#F0D22E">{{balance.target.free | truncateAsStringToPrecision: 4}}</span> {{balance.target.symbol}}</span></div>
+        <form nz-form [formGroup]="sellForm" (ngSubmit)="trySell()" class="form-body" style="border-left: 0.1px solid #5B5F62" >
+          <nz-form-item>
+            <nz-form-control>
+              <nz-input-group style="position:relative;">
+                <input class="input-field" type="text" nz-input name="sellPrice" formControlName="sellPrice" placeholder="{{ 'TRADE.SELL_PRICE' | translate }}" (keyup)="forcePricePrecision('sell')">
+                <i nz-icon type="sync" theme="outline" style="position: absolute;right:8px;font-size: 16px;top: 8px;z-index: 2;color: #93989D;cursor: pointer;" (click)="setOptimalPrice('sell')"></i>
+                <!-- <nz-form-extra class="input-extra">最佳卖价: <span>N/A</span></nz-form-extra> -->
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-input-group>
+                <input class="input-field" type="text" nz-input name="sellAmount" formControlName="sellAmount" placeholder="{{ 'TRADE.SELL_VOLUME' | translate }}" (keyup)="forceAmountPrecision('sell')">
+                <nz-form-extra class="input-extra">{{ 'TRADE.MAX' | translate }}: <span>{{MaxSellAmount | truncateAsStringToPrecision: minVolumePrecision}}</span> {{balance.target.symbol}}</nz-form-extra>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item style="margin-bottom: 0px">
+            <nz-form-control>
+              <nz-input-group>
+                <nz-row>
+                  <nz-col nzSpan="5">
+                    <p style="height: 36px; margin: 0 4px; padding-top: 8px; color: #FFFFFF">{{ 'TRADE.RATIO' | translate }}: </p>
+                  </nz-col>
+                  <nz-col nzSpan="19">
+                    <nz-slider [nzTipFormatter]="ratioformatter" [nzDisabled]="MaxSellAmount <= 0" [nzMax]="1" [nzStep]="0.25" (nzOnAfterChange)="onSellRatioChanged($event)"></nz-slider>
+                  </nz-col>
+                </nz-row>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <div>
+            <p style="color: white; font-size: 14px; margin: 0 4px">{{ 'TRADE.AMOUNT' | translate }}: {{SellVolume | truncateAsStringToPrecision}} ({{balance.market.symbol}}) </p>
+            <p style="color: #93989D; font-size: 12px; margin: 2px 4px 10px 4px">{{ 'TRADE.FEE' | translate }} {{fee * 100}}%</p>
+          </div>
+          <nz-form-item>
+            <nz-form-control>
+              <div *ngIf="isMinSellAmountTipVisible" class="tip-box">
+                 <p class="tip-text">{{ 'TRADE.MIN'| translate }} {{ 'TRADE.SELL_VOLUME' | translate }}: {{minVolume}} {{balance.target.symbol}} </p>
+                 <i class="tip-arrow"></i>
+              </div>
+              <button nz-button style="width: 100%; height: 36px;" [nzType]="'danger'" [nzLoading]="isMinSellAmountTipVisible || isFetchingBalance">{{ 'TRADE.SELL' | translate }}</button>
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>

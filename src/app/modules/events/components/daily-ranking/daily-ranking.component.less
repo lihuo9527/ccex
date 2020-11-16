@@ -1,0 +1,44 @@
+.ranking-container {
+    width: 100%;
+    min-width: 900px;
+    display: flex;
+    justify-content: center;
+    flex-flow: wrap;
+}
+
+.ranking-box {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    align-items: center;
+    flex-flow: wrap;
+    margin: 20px 50px 150px 50px;
+    ::ng-deep nz-table {
+        padding: 0;
+        width: 100%;
+        thead>th,
+        thead>tr,
+        tbody>tr>td {
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #eee;
+            text-align: center;
+        }
+        .ant-table-placeholder {
+            border: 1px solid #eee;
+            border-top: none;
+        }
+    }
+}
+
+.first {
+    color: #f4f76c;
+}
+
+.second {
+    color: #e7e7e7;
+}
+
+.third {
+    color: #f2b272;
+}

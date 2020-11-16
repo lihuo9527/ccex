@@ -1,0 +1,49 @@
+<nz-modal [(nzVisible)]="isVisible" nzTitle="{{ 'USER.GOOGLE_TWO_STEP' | translate }}" nzWrapClassName="vertical-center-modal"
+  [nzFooter]="null" [nzWidth]="1000" nzClosable="true" (nzOnCancel)="close()">
+  <nz-steps [nzCurrent]="currentStep">
+    <nz-step nzTitle="{{ 'USER.VERIFY_CODE' | translate }}"></nz-step>
+    <nz-step nzTitle="{{ 'USER.BIND_GA' | translate }}"></nz-step>
+    <nz-step nzTitle="{{ 'COMMON.RESULT' | translate }}"></nz-step>
+  </nz-steps>
+  <div class="vertical-center-modal__step-content-wrapper">
+    <div class="vertical-center-modal__step-content" [ngSwitch]="currentStep">
+      <div *ngSwitchCase="0" style="width: 100%;">
+        <label class="validate-box">
+          <span class="validate-text">{{ 'USER.SEND_TO_ACCOUNT' | translate }} {{ apiClient.currentUser }}</span>
+          <input [ngClass]="{'input-invalid':isInvalid===true}" type="text" nz-input style="flex:0 0 80%;"
+            [(ngModel)]="verifyCode" (ngModelChange)="validateValue($event)">
+          <button nz-button nzType="primary" style="flex:0 0 20%;padding: 0;" (click)="sendVerifyCode()" [ngClass]="{'btn-disable': countdown>0}">
+            {{ 'COMMON.RESEND' | translate }} <span *ngIf="countdown>0">( {{ countdown }} )</span>
+          </button>
+          <span *ngIf="isInvalid" class="is-dropping" style="flex:0 0 50%;">{{ 'USER.CODE_INVALID' | translate }}</span>
+        </label>
+      </div>
+      <div *ngSwitchCase="1">
+        <div class="qrCode-box">
+          <qrcode [qrdata]="twoStepObj.url" [size]="128" [level]="'M'"></qrcode>
+        </div>
+        <div class="key-box">
+          <span style="flex:0 0 100%;font-size: 15px;">{{ 'USER.GOOGLE_TWO_STEP_KEY' | translate }}</span>
+          <span nz-input class="key">{{ twoStepObj.key }}</span>
+        </div>
+        <p>{{ 'USER.KEY_DESCRIPTION' | translate }}</p>
+        <label class="vertical-center-modal__step-content-label">
+          {{ 'USER.INPUT_TWO_STEP_CODE' | translate }}
+          <input [ngClass]="{'input-invalid':isInvalid===true}" type="text" nz-input [(ngModel)]="twoStepCode"
+            (ngModelChange)="validateValue($event)">
+          <span *ngIf="isInvalid" class="is-dropping" style="flex:0 0 50%;">{{ 'USER.CODE_INVALID' | translate }}</span>
+        </label>
+      </div>
+      <div *ngSwitchCase="2" class="result-box">
+        <p *ngIf="!bindStatus">{{ 'USER.BIND_FAILURE' | translate }}</p>
+        <p *ngIf="bindStatus">{{ 'USER.BIND_SUCCESS' | translate }}</p>
+      </div>
+    </div>
+    <button *ngIf="currentStep<2" class="btn-submit" nz-button nzType="primary" [nzLoading]="isLoading" (click)="submit()">
+      {{'COMMON.NEXT' | translate }}
+    </button>
+    <a *ngIf="currentStep===2" routerLink="/settings/overview">
+      <button class="btn-submit" nz-button nzType="primary">{{ 'USER.BACK' | translate }}</button>
+    </a>
+  </div>
+</nz-modal>

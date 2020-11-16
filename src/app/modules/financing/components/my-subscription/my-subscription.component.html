@@ -1,0 +1,183 @@
+<div class="subscription-box">
+  <h2 class="subscription-title">{{ 'FINANCING.MY_SUBSCRIPTION' | translate }}</h2>
+  <nz-table #purchaseOrdersTable nzSize="middle" [nzPageSize]="10"
+    style="flex:0 0 80%;position: relative;min-width: 1100px;" [nzHideOnSinglePage]="true" [nzData]="purchaseOrders"
+    [nzLoading]="isLoading">
+    <div class="expired-record-box">
+      <input type="checkbox" [(ngModel)]="isShowExpiredSubscriptions" (ngModelChange)="ordersCheckBoxOnChange($event)">
+      <p style="margin:0;" *ngIf="localize.currentLanguage.id === 'zh_CN'">显示已过期认购记录</p>
+      <p style="margin:0;" *ngIf="localize.currentLanguage.id === 'en_US'">Show Expired Subscriptions</p>
+    </div>
+    <thead (nzSortChange)="sortPurchaseOrders($event)" nzSingleSort>
+      <tr>
+        <th style="padding-left: 20px; width: 170px">{{ 'FINANCING.PRODUCT' | translate }}</th>
+        <th style="width: 110px">{{ 'FINANCING.CODE' | translate }}</th>
+        <th style="text-align: center; width: 70px">{{ 'WALLET.COIN' | translate }}</th>
+        <th style="min-width: 100px">{{ 'FINANCING.PURCHASE_AMOUNT' | translate }}</th>
+        <th nzShowSort nzSortKey="createdAt" style="padding-left: 20px; width: 110px">{{ 'FINANCING.PURCHASE_DATE' | translate }}</th>
+        <th style="width: 110px">{{ 'FINANCING.VALUE_DATE' | translate }}</th>
+        <th style="width: 110px">{{ 'FINANCING.EXPIRY_DATE' | translate }}</th>
+        <th style="text-align: right">{{ 'FINANCING.TOTAL_INCOME' | translate }}</th>
+        <th style="text-align: center; width: 240px">{{ 'COMMON.OPERATION' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody style="background-color: white">
+      <ng-container *ngFor="let data of purchaseOrdersTable.data">
+        <tr *ngIf="data.isVisible" [ngClass]="{'background-color-gary':!data.isOperationVisible}">
+          <td style="padding-left: 20px">
+            <a style="color:rgba(0, 0, 0, 0.65);border-bottom: 1px solid rgba(0, 0, 0, 0.65);"
+              [routerLink]="['/financing/product_details', {id: data.productId, coin: data.coin}]">{{data.name}}</a>
+          </td>
+          <td>{{ data.productId }}</td>
+          <td style="text-align: center">{{ data.coin }}</td>
+          <td>{{ data.amount }}</td>
+          <td>{{ data.createdAt | date:"yyyy/MM/dd HH:mm:ss" }}</td>
+          <td>{{ data.startsAt | date:"yyyy/MM/dd" }}</td>
+          <td>{{ data.endsAt | date:"yyyy/MM/dd" }}</td>
+          <td style="text-align: right">{{ data.interest | truncateToPrecision }}</td>
+          <td *ngIf="!data.isOperationVisible"></td>
+          <td style="text-align: center;" *ngIf="data.isOperationVisible">
+            <div *ngIf="data.startsAt <= data.now">
+              <button nz-button
+                (click)="tryUnlockInterest(data.id,data.coin)">{{ 'FINANCING.DEFREEZE_INCOME' | translate }}</button>
+              <button nz-button style="margin-left:5px;"
+                (click)="tryForcibleWithdraw(data.id,data.coin,data.amount,data.damageRatio)">{{ 'FINANCING.FORCIBLE_WITHDRAW' | translate }}</button>
+            </div>
+            <div *ngIf="data.startsAt > data.now">
+                <button nz-button nz-popconfirm
+                nzPlacement="left"
+                nzTitle="{{ 'TRADE.CANCEL_ORDER' | translate }}?"
+                nzOkText="{{ 'COMMON.YES' | translate }}"
+                nzCancelText="{{ 'COMMON.NO' | translate }}"
+                (nzOnConfirm)="forcibleWithdraw(data.id)">{{ 'COMMON.CANCEL' | translate }}</button>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </nz-table>
+
+  <!-- Unlock Income Window -->
+  <nz-modal nzWrapClassName="vertical-center-modal" [(nzVisible)]="isUnlockIncomePopupVisible"
+    nzTitle="{{ 'FINANCING.DEFREEZE_INCOME' | translate }}" [nzFooter]="null" [nzWidth]="550" nzClosable="true"
+    nzMaskClosable="true" (nzOnCancel)="isUnlockIncomePopupVisible=false">
+    <div class="tips-box" *ngIf="localize.currentLanguage.id === 'zh_CN'">
+      <span>温馨提示：</span>
+      <span>解冻收益操作将币种划分至可用余额；</span>
+      <span><span style="color:red;">必须</span>满足最小解冻额度才可进行操作；</span>
+      <span>解冻不产生任何手续费，且实时生效；</span>
+      <span>解冻后方可划转至总钱包。</span>
+    </div>
+    <div class="tips-box" *ngIf="localize.currentLanguage.id === 'en_US'">
+      <span>Tips：</span>
+      <span>The coins will be transferred to the avialable balance once defrozen；</span>
+      <span>Any defreeze operation <span style="color:red;">MUST</span> meet the minimum amount；</span>
+      <span>Defreeze operation is completely free and instant；</span>
+      <span>The coins can be further transferred to the main Wallet once in the availabe balance.</span>
+    </div>
+    <div style="position: absolute;top:48%;left:47%;" *ngIf="isDefreezeWindowLoading">
+        <div class="try-unlock-loading"></div>
+    </div>
+    <div style="margin-top: 50px;display: flex;justify-content: space-between;font-size: 14px;">
+      <p style="margin-bottom:5px;">
+        <span>{{ 'FINANCING.INCOME_AVAIALBE_TO_DEFREEZE' | translate }}：</span>
+        <span class="coin-amount">{{ AvailableUnlockAmount }}</span>
+        <span>{{ coin }}</span>
+      </p>
+      <p style="margin-bottom:5px;">
+        <span>{{ 'FINANCING.MIN_DEFREEZE_AMOUNT' | translate }}：</span>
+        <span class="coin-amount">{{ MinUnlockAmount }} </span>
+        <span>{{ coin }}</span>
+      </p>
+    </div>
+    <ng-container>
+      <label class="amount-box">
+        <span style="background:#E8E8E8;flex:0 0 25%;color:#101315;">{{'FINANCING.DEFREEZE_AMOUNT' | translate }}</span>
+        <input nz-input type="text" style="flex:0 0 60%;text-align: right;" [(ngModel)]="unlockAmount"
+          (keyup)="forceAmountPrecision()" [disabled]="isDefreezeWindowLoading">
+        <span>{{ coin }}</span>
+      </label>
+      <p style="margin-bottom:50px;display: flex;justify-content: flex-end;font-size: 14px;">
+        <span>{{ 'FINANCING.REMAINING_AFTER_DEFREEZE'  | translate }}：</span>
+        <span class="coin-amount">{{ BalanceAfterUnlock }}</span>
+        <span>{{ coin }}</span>
+      </p>
+      <button nz-button nzType='primary' [disabled]="minUnlockAmount > UnlockAmount || !unlockAmount"
+        [nzLoading]="isUnlockLoading" nzSize="large" class="submit" (click)="unlockInterest()">
+        {{ 'FINANCING.DEFREEZE_NOW' | translate }}
+      </button>
+    </ng-container>
+
+    <!-- defreeze record table-->
+    <span style="padding-right:10px;">{{  'FINANCING.DEFREEZE_RECORD' | translate }}</span>
+    <a>
+      <i nz-icon type="down" theme="outline" *ngIf="!isDefreezeRecordShow" (click)="isDefreezeRecordShow=true"></i>
+    </a>
+    <a>
+      <i nz-icon type="up" theme="outline" *ngIf="isDefreezeRecordShow" (click)="isDefreezeRecordShow=false"></i>
+    </a>
+    <nz-table #defreezeHistoriesTable nzSize="middle" [nzPageSize]="10" style="flex:0 0 50%;min-width: 800px;"
+      [nzHideOnSinglePage]="true" [nzData]="defreezeHistories" *ngIf="isDefreezeRecordShow">
+      <thead>
+        <tr>
+          <th width="33.33%">{{ 'WALLET.COIN' | translate }}</th>
+          <th width="33.33%">{{ 'COMMON.AMOUNT' | translate }}</th>
+          <th width="33.33%">{{ 'COMMON.TIME' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody style="background-color: white">
+        <ng-container *ngFor="let data of defreezeHistoriesTable.data">
+          <tr>
+            <td width="33.33%">{{data.coin}}</td>
+            <td width="33.33%">{{data.amount}}</td>
+            <td width="33.33%">{{data.createdAt | date:"yyyy/MM/dd HH:mm:ss"}}</td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </nz-table>
+  </nz-modal>
+
+  <!-- Forcible Withdraw Window -->
+  <nz-modal nzWrapClassName="vertical-center-modal" [(nzVisible)]="isForcibleWithdrawPopupVisible"
+    nzTitle="{{ 'FINANCING.FORCIBLE_WITHDRAW' | translate }}" [nzFooter]="null" [nzWidth]="500" nzClosable="true"
+    nzMaskClosable="true" (nzOnCancel)="isForcibleWithdrawPopupVisible=false">
+    <div class="tips-box" *ngIf="localize.currentLanguage.id === 'zh_CN'">
+      <span>温馨提示：</span>
+      <span>在理财产品到期之前，强制赎回本金将扣除<span style="color:red;">{{ damageRatio * 100 }}%的本金作为违约金</span>；</span>
+      <span>一旦确认赎回，赎回当天不再产生收益，且本金将在48小时内划入理财中心的可用额度。</span>
+    </div>
+    <div class="tips-box" *ngIf="localize.currentLanguage.id === 'en_US'">
+      <span>Tips：</span>
+      <span>During the fixed term of a product, the forcible withdraw will cause <span
+          style="color:red;">{{ damageRatio * 100 }}% deduction
+          of
+          the capital as penalty</span>；</span>
+      <span>On the day when withdraw is confirmed, there will be no more income counted, and the capital will be
+        returned within 48 hours to the valid balance of the Financing Center.</span>
+    </div>
+    <div style="display:flex;justify-content: flex-start;align-items: center;margin-top: 10px;margin-bottom: 40px;">
+      <input type="checkbox" [(ngModel)]="isWithdrawNowBtnDisabled" style="margin-right:10px;">
+      <span *ngIf="localize.currentLanguage.id === 'zh_CN'" style="color:red;">同意以上条款</span>
+      <span *ngIf="localize.currentLanguage.id === 'en_US'" style="color:red;">I agree to the above terms and
+        conditions.</span>
+    </div>
+    <ng-container>
+      <label class="amount-box">
+        <span
+          style="background:#E8E8E8;flex:0 0 30%;color:#101315;">{{'FINANCING.REDEEM_PRINCIPAL' | translate }}</span>
+        <div style="flex:0 0 55%;border:1px solid #eee;text-align: right;padding-right: 5px;">{{forcibleWithdrawAmount}}
+        </div>
+        <span>{{coin}}</span>
+      </label>
+      <p style="display:flex;justify-content:flex-end;">
+        <span>{{ 'FINANCING.AMOUNT_AFTER_DEDUCTION' | translate }}：</span>
+        <span class="coin-amount">{{ (forcibleWithdrawAmount - forcibleWithdrawAmount * damageRatio) | truncateToPrecision }}</span>
+        {{coin}}
+      </p>
+      <button nz-button [disabled]="!isWithdrawNowBtnDisabled" nzType='primary' [nzLoading]="isForcibleWithdrawLoading"
+        nzSize="large" class="submit" (click)="forcibleWithdraw()">
+        {{ 'FINANCING.WITHDRAW_NOW' | translate }}
+      </button>
+    </ng-container>
+  </nz-modal>
+</div>

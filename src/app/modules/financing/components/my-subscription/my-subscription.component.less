@@ -1,0 +1,96 @@
+.tips-box {
+    background: #E8E8E8;
+    padding: 20px;
+    color: #101315;
+    display: flex;
+    flex-flow: wrap;
+}
+
+.tips-box span {
+    flex: 0 0 100%;
+    line-height: 20px;
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+.amount-box {
+    flex: 0 0 100%;
+    margin-bottom: 10px;
+    display: flex;
+    flex-flow: wrap;
+}
+
+.amount-box span {
+    flex: 0 0 15%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: gray;
+    color: #fff;
+}
+
+.subscription-box {
+    width: 100%;
+    display: flex;
+    min-width: 1200px;
+    justify-content: center;
+    flex-flow: wrap;
+}
+
+.subscription-title {
+    min-width: 1100px;
+    flex: 0 0 80%;
+    background: #fff;
+    margin: 0;
+    padding: 50px 10px 50px 0;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid #eee;
+}
+
+.expired-record-box {
+    position: absolute;
+    top: -30px;
+    right: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.submit {
+    flex: 0 0 100%;
+    margin-top: 20px;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.subscription-box {
+    ::ng-deep .ant-table-thead>tr>th .ant-table-column-sorter {
+        left: 5px;
+    }
+}
+
+.coin-amount {
+    color: red;
+    padding-right: 5px;
+}
+
+.background-color-gary {
+    background: #eee;
+}
+
+.try-unlock-loading {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border-left: 1px solid #eee;
+    border-bottom: 1px solid #666;
+    color: #555;
+    animation: 0.9s linear infinite loadingCircle;
+}
+
+@keyframes loadingCircle {
+    100% {
+        transform: rotate(360deg);
+    }
+}

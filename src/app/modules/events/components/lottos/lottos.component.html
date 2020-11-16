@@ -1,0 +1,101 @@
+<div class="common-content-container">
+  <div class="lottos-container">
+    <div style="width:100%;flex: 0 0 100%;">
+      <img src="assets/images/events/newcomer_{{localize.currentLanguage.id === 'zh_CN' ? 'zh' : 'en'}}.png?t=201907242005" style="width:100%;">
+    </div>
+    <div class="lottos-box">
+      <div class="bonus-box has-shadow">
+        <div>
+          <span style="padding-right: 30px;">{{'EVENT_CENTER.TOTAL_BONUS' | translate }}： {{TotalBonus}} {{baseCoin}}
+          </span>
+          <a (click)="tryOpenLottoHistoriesPopup()">{{'EVENT_CENTER.LOTTO_HISTORIES' | translate }}</a>
+        </div>
+        <div>
+          <span>{{'EVENT_CENTER.LOCK_BONUS' | translate }}： {{LockBonus}} {{baseCoin}} </span>
+        </div>
+        <div>
+          <span style="padding-right: 30px;">{{'EVENT_CENTER.UNLOCK_BONUS' | translate }}： {{UnlockBonus}} {{baseCoin}}
+          </span>
+          <a (click)="tryOpenUnlockRecordPopup()">{{'EVENT_CENTER.DETAILS' | translate }}</a>
+        </div>
+      </div>
+      <div class="lottos-table">
+        <nz-table #lottosTable [nzData]="lottos" nzSize="middle" [nzHideOnSinglePage]="true"
+          [nzLoading]="isLottosLoading">
+          <thead>
+            <th>{{'COMMON.NAME' | translate}}</th>
+            <th>{{'EVENT_CENTER.BONUS' | translate }}</th>
+            <th>{{'EVENT_CENTER.EXPIRY_DATE' | translate }}</th>
+            <th></th>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let lotto of lottosTable.data">
+              <tr>
+                <td *ngIf="localize.currentLanguage.id === 'en_US'">{{lotto.name}}</td>
+                <td *ngIf="localize.currentLanguage.id === 'zh_CN'">{{lotto.name_zh}}</td>
+                <td>{{lotto.min}} ~ {{lotto.max}} {{lotto.coin}} ({{'EVENT_CENTER.RANDOM' | translate }})</td>
+                <td>{{lotto.endsAt | date:"yyyy/MM/dd" }}</td>
+                <td><a [routerLink]="['/events/lotto_detail',{'lottoId':lotto.id,'catalogId':lotto.catalog}]">{{'FINANCING.DETAILS' | translate}}</a></td>
+              </tr>
+            </ng-container>
+          </tbody>
+
+        </nz-table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lottos Histories Window-->
+<nz-modal [(nzVisible)]="isLottoHistoriesPopupVisible" nzTitle="{{'EVENT_CENTER.LOTTO_HISTORIES' | translate }}" [nzFooter]="null"
+  [nzWidth]="900" nzClosable="true" nzMaskClosable="true" (nzOnCancel)="isLottoHistoriesPopupVisible=false">
+  <nz-table #lottoHistoriesTable nzSize="middle" [nzPageSize]="10" [nzHideOnSinglePage]="true" [nzData]="lottoHistories">
+    <thead>
+      <tr>
+        <th>{{'COMMON.TIME' | translate }}</th>
+        <th>{{ 'EVENT_CENTER.LOTTO_NAME' | translate }}</th>
+        <th>{{'EVENT_CENTER.GET_AMOUNT' | translate }}</th>
+        <th>{{ 'WALLET.COIN' | translate }}</th>
+        <th style="text-align: center;">{{'COMMON.STATUS' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody style="background-color: white">
+      <tr *ngFor="let lotto of lottoHistoriesTable.data">
+        <td>{{lotto.createdAt | date:"yyyy/MM/dd HH:mm:ss"}}</td>
+        <td>{{lotto.name}}</td>
+        <td>{{lotto.amount}}</td>
+        <td>{{lotto.coin}}</td>
+        <td *ngIf="lotto.consumedBy">
+          <p style="margin: 0;width: 100%;text-align: center;">{{'EVENT_CENTER.ACTIVATED' | translate }}</p>
+          <p style="margin: 0;width: 100%;text-align: center;">({{lotto.consumedBy.id}})</p>
+        </td>
+        <td *ngIf="!lotto.consumedBy">
+            <p style="margin: 0;width: 100%;text-align: center;">{{'EVENT_CENTER.NOT_ACTIVE' | translate}}</p>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-modal>
+
+<!-- unlock Record Window-->
+<nz-modal [(nzVisible)]="isUnlockRecordPopupVisible" nzTitle="{{'EVENT_CENTER.UNLOCK_BONUS' | translate }}" [nzFooter]="null"
+  [nzWidth]="550" nzClosable="true" nzMaskClosable="true" (nzOnCancel)="isUnlockRecordPopupVisible=false">
+  <nz-table #unlockRecordsTable nzSize="middle" [nzPageSize]="10" [nzHideOnSinglePage]="true" [nzData]="unlockRecords">
+    <thead>
+      <tr>
+        <th>{{'EVENT_CENTER.FROM_LOTTO' | translate }}</th>
+        <th>{{ 'COMMON.AMOUNT' | translate }}</th>
+        <th>{{ 'WALLET.COIN' | translate }}</th>
+        <th style="text-align: right;">{{'COMMON.TIME' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody style="background-color: white">
+      <tr *ngFor="let record of unlockRecordsTable.data">
+        <td>{{record.name}}</td>
+        <td>{{record.amount}}</td>
+        <td>{{record.coin}}</td>
+        <td style="text-align: right;width: 180px;">{{record.createdAt | date:"yyyy/MM/dd HH:mm:ss"}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-modal>

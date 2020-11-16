@@ -1,0 +1,137 @@
+.chart {
+    height: 450px;
+}
+
+.container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    min-width: 1200px;
+}
+
+.products-on-sale-box {
+    width: 100%;
+    display: flex;
+    min-width: 1000px;
+    justify-content: center;
+    flex-flow: wrap;
+    margin-top: 30px;
+}
+
+.balance-container {
+    min-width: 1000px;
+    flex: 0 0 60%;
+    background: #fff;
+    width: 60%;
+    max-width: 60%;
+    padding-bottom: 20px;
+}
+
+.tips-box {
+    background: #E8E8E8;
+    padding: 20px;
+    color: #101315;
+    display: flex;
+    flex-flow: wrap;
+}
+
+.tips-box span {
+    flex: 0 0 100%;
+    line-height: 20px;
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+.amount-box {
+    flex: 0 0 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-flow: wrap;
+}
+
+.amount-box span {
+    flex: 0 0 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: gray;
+    color: #fff;
+}
+
+.product-table {
+    min-width: 1000px;
+    flex: 0 0 60%;
+    width: 60%;
+    max-width: 60%;
+    background: #fff;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.balance-box {
+    margin-top: 20px;
+    display: flex;
+    width: 60%;
+    max-width: 60%;
+    flex-flow: wrap;
+    float: left;
+}
+
+.balance-box h2 {
+    padding-left: 80px;
+    flex: 0 0 100%;
+    width: 100%;
+    max-height: 50px;
+}
+
+.product-table,
+.transfer-box {
+    ::ng-deep nz-table th,
+    ::ng-deep nz-table td {
+        text-align: center;
+    }
+    ::ng-deep .ant-collapse-content>.ant-collapse-content-box {
+        padding: 0;
+    }
+}
+
+.transfer-box {
+    flex: 0 0 100%;
+    max-width: 100%;
+    display: flex;
+    flex-flow: wrap;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    max-height: 300px;
+}
+
+.chart-box {
+    max-width: 40%;
+    display: flex;
+    justify-content: center;
+    height: 450px;
+    width: 40%;
+    position: relative;
+    float: right;
+}
+
+.chart-loading {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    border-radius: 50%;
+    border-left: 1px solid #eee;
+    border-bottom: 1px solid #666;
+    top: ~"calc(50% - 20px)";
+    left: ~"calc(50% - 20px)";
+    color: #555;
+    animation: 0.9s linear infinite loadingCircle;
+}
+
+@keyframes loadingCircle {
+    100% {
+        transform: rotate(360deg);
+    }
+}

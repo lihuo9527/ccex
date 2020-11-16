@@ -1,0 +1,80 @@
+<div class="bonus-container">
+  <div style="display:flex;flex:0 0 100%;justify-content: center;">
+    <h2 class="bonus-title">{{ 'FINANCING.MY_BONUS' | translate }}</h2>
+  </div>
+  <div style="display:flex;flex:0 0 100%;justify-content: center;">
+    <div class="invite-box">
+      <div style="flex:0 0 70%;display: flex;flex-flow: wrap;">
+        <p style="flex:0 0 100%;margin: 0;margin-bottom:30px;">
+          <span style="color:#888;">{{'INVITE.MY_REFERRAL_ID' | translate }}：</span> <span
+            style="color: #dc204f;font-size: 20px;">{{ referralId }}</span>
+        </p>
+        <div style="flex:0 0 100%;display: flex;align-items: center;">
+          <span style="color:#888;">{{'INVITE.REFERRAL_LINK' | translate }}：</span>
+          <input #copyLink type="text" nz-input style="width: 360px;font-size: 12px;" [value]="ReferralLink" readonly>
+          <a class="link-copy" (click)="copyReferralLink()">
+            <i nz-icon type="copy" theme="outline" style="font-size:18px;" class="is-rising"></i>
+          </a>
+        </div>
+      </div>
+      <div style="flex:0 0 30%;display: flex;padding-left: 30px;justify-content: center;">
+        <nz-spin *ngIf="!referralId" [nzSize]="'large'"> </nz-spin>
+        <qrcode *ngIf="referralId" [qrdata]="ReferralLink" [size]="110" [level]="'M'"></qrcode>
+      </div>
+    </div>
+  </div>
+  <nz-table #bonusHistoriesTable nzSize="middle" style="flex:0 0 50%;min-width: 800px;"
+    [nzHideOnSinglePage]="true" [nzData]="bonusHistories"
+    [nzLoading]="isBonusHistoriesTableLoading" (nzPageIndexChange)="fetchBonusProfitHistories($event)"
+    [(nzPageIndex)]="historiesPageIndex" [nzTotal]="historiesTotalDataVolume"
+    [nzFrontPagination]="false" nzPageSize="30">
+    <thead (nzSortChange)="sortBonusHistories($event)" nzSingleSort>
+      <tr>
+        <th nzSortKey="createdAt" style="width: 220px; text-align: center">{{ 'COMMON.TIME' | translate }}</th>
+        <th style="width: 150px; text-align: center;">{{ 'WALLET.COIN' | translate }}</th>
+        <th nzSortKey="amount" style="padding-right: 40px; text-align: right; width: 230px">{{ 'COMMON.AMOUNT' | translate }}</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody style="background-color: white">
+      <ng-container *ngFor="let data of bonusHistoriesTable.data">
+        <tr>
+          <td style="text-align: center">{{data.createdAt | date:"yyyy/MM/dd"}}</td>
+          <td style="text-align: center;">{{data.coin}}</td>
+          <td style="padding-right: 22px; text-align: right">{{data.amount}}</td>
+          <td style="text-align: center;">
+            <a (click)="openDetailWindow(data.coin, data.createdAt)">{{ 'FINANCING.DETAILS' | translate}}</a>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </nz-table>
+
+   <!-- Bonus Profits Detail Window-->
+   <nz-modal [(nzVisible)]="isBonusDetailPopupVisible" nzWrapClassName="bonus-record-modal"
+     nzTitle="{{detailObj.createdAt | date:'yyyy/MM/dd'}} {{ 'FINANCING.BONUS_RECORD' | translate }}"
+     [nzFooter]="null" [nzWidth]="700" nzClosable="true" nzMaskClosable="true" (nzOnCancel)="isBonusDetailPopupVisible=false">
+   <nz-table #bonusRecordsTable nzSize="middle" [nzHideOnSinglePage]="true" [nzData]="bonusRecords"
+     (nzPageIndexChange)="fetchBonusProfitsDetail($event)" nzPageSize="50"
+     [nzLoading]="isBonusRecordTableLoading" [nzFrontPagination]="false" [nzTotal]="detailsTotalDataVolume" >
+     <thead (nzSortChange)="sortBonusRecords($event)" nzSingleSort>
+       <tr>
+        <th style="width: 200px">{{ 'FINANCING.INVITEE_USERS' | translate }}</th>
+        <th nzSortKey="invitedAt" style="width: 120px">{{ 'FINANCING.INVITEE_DATE' | translate }}</th>
+        <th nzShowSort nzSortKey="generation" style="width: 120px; text-align: center">{{ 'FINANCING.RANK' | translate }}</th>
+        <th nzShowSort nzSortKey="amount" style="text-align: right; padding-right: 60px">{{ 'COMMON.AMOUNT' | translate }}</th>
+       </tr>
+     </thead>
+     <tbody style="background-color: white">
+       <ng-container *ngFor="let data of bonusRecordsTable.data">
+         <tr>
+          <td style="width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{data.name}}</td>
+           <td>{{data.invitedAt | date:"yyyy/MM/dd"}}</td>
+           <td style="text-align: center">{{data.generation}}</td>
+           <td style="text-align: right">{{data.amount | truncateToPrecision}} {{data.coin}}</td>
+         </tr>
+       </ng-container>
+     </tbody>
+   </nz-table>
+ </nz-modal>
+</div>
